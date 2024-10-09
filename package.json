@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "connect": "^3.7.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5"
+  }
+}
