@@ -1,10 +1,14 @@
 import { NextFunction } from 'connect';
-import express, { Request, Response, ErrorRequestHandler } from 'express'
+import express, { Request, Response, ErrorRequestHandler, Router } from 'express'
 const app: any = express();
 const cors = require("cors")
 const PORT = 3000;
 app.use(express.json());
 app.use(cors())
+const authRouter = require("./routers/authRouter")
+
+
+app.use("/auth", authRouter)
 
 
 app.get("/", (req: Request, res: Response) => {
