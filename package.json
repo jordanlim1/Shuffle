@@ -1,8 +1,12 @@
 {
+  "scripts": {
+    "start": "nodemon server/server.ts"
+  },
   "dependencies": {
     "connect": "^3.7.0",
     "cors": "^2.8.5",
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "nodemon": "^3.1.7"
   },
   "devDependencies": {
     "@types/node": "^22.7.5"
