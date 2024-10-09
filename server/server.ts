@@ -1,13 +1,13 @@
 import { NextFunction } from 'connect';
 import express, { Request, Response, ErrorRequestHandler } from 'express'
-const app = express();
-import cors from 'cors';
+const app: any = express();
+const cors = require("cors")
 const PORT = 3000;
 app.use(express.json());
 app.use(cors())
 
 
-app.use("/", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
     return res.send("the server works!!")
 })
 

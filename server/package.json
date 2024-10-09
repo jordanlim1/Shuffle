@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon server/server.ts"
+    "start": "nodemon server.ts"
   },
   "dependencies": {
     "connect": "^3.7.0",
@@ -9,6 +9,11 @@
     "nodemon": "^3.1.7"
   },
   "devDependencies": {
-    "@types/node": "^22.7.5"
+    "@types/connect": "^3.4.38",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.5",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
   }
 }
