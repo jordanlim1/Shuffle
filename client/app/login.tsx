@@ -58,7 +58,6 @@ export default function Login() {
 
     await AsyncStorage.setItem("code_verifier", encodedCodeVerifier);
 
-    console.log("differece", codeVerifier, encodedCodeVerifier);
     setCodeChallenge(codeChallenge);
   }
 
@@ -123,12 +122,34 @@ export default function Login() {
     const body = await fetch(tokenEndpoint!, payload);
     const response = await body.json();
 
-    console.log("Response from Spotify Token Endpoint:", response);
     if (response.access_token) {
       await AsyncStorage.setItem("access_token", response.access_token);
     } else {
       throw new Error("Failed to retrieve access token");
     }
+
+    getProfile(response.access_token);
+  }
+
+  async function getProfile(accessToken: string) {
+    const response = await fetch(
+      "https://api.spotify.com/v1/me/top/artists?limit=5",
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    let artists = [];
+
+    for (let i = 0; i < data.items.length; i++) {
+      artists.push(data.items[i].name);
+    }
+
+    console.log("profile", artists);
   }
 
   return (
