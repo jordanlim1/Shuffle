@@ -7,30 +7,28 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Link } from "expo-router";
-import { Linking } from "react-native"; // For opening external URLs
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import "react-native-get-random-values";
 import CryptoJS from "crypto-js";
-import { useRouter } from "expo-router"; // Use Expo Router for navigation
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
+import { client_id, authorizationEndpoint, tokenEndpoint } from "@env";
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const navigate = useNavigation();
-  const router = useRouter(); // Get the router object from Expo Router
+  const router = useRouter();
 
   function handleChange(key: string, value: string) {
     setCredentials((prev) => ({ ...prev, [key]: value }));
   }
 
   const discovery = {
-    authorizationEndpoint: "https://accounts.spotify.com/authorize",
-    tokenEndpoint: "https://accounts.spotify.com/api/token",
+    authorizationEndpoint: authorizationEndpoint,
+    tokenEndpoint: tokenEndpoint,
   };
-
-  const authEndpoint = "https://accounts.spotify.com/authorize";
 
   const generateRandomString = (length: number) => {
     const possible =
@@ -39,25 +37,20 @@ export default function Login() {
     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
   };
 
-  // Performs SHA-256 hashing
   const sha256 = async (plain: string) => {
     const hash = CryptoJS.SHA256(plain);
     return CryptoJS.enc.Base64.stringify(hash);
   };
 
-  // URL-safe Base64 encoding
   const base64encode = (input: string) => {
     return input.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
   };
 
-  // Spotify authentication function using Expo AuthSession
   async function handleAuthentication() {
-    // Generate code verifier and code challenge
     const codeVerifier = generateRandomString(64);
     const hashed = await sha256(codeVerifier);
     const codeChallenge = base64encode(hashed);
 
-    // Store the code verifier in AsyncStorage
     await AsyncStorage.setItem("code_verifier", codeVerifier);
 
     return codeChallenge;
@@ -67,7 +60,7 @@ export default function Login() {
 
   const [request, response, promptAsync] = useAuthRequest(
     {
-      clientId: "7425c2416852448a94bb199a9f49c0ba", // Replace with your actual Spotify client ID
+      clientId: client_id,
       scopes: [
         "user-read-email",
         "user-library-read",
