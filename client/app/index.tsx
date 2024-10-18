@@ -21,5 +21,4 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Centers content vertically
     alignItems: "center", // Centers content horizontally,
   },
-
 });

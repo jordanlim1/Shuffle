@@ -1,17 +1,165 @@
-import { SafeAreaView, View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { Link } from "expo-router";
-import { useState } from "react";
+import { Linking } from "react-native"; // For opening external URLs
+import { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import "react-native-get-random-values";
+import CryptoJS from "crypto-js";
+import { useRouter } from "expo-router"; // Use Expo Router for navigation
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const navigate = useNavigation();
+  const router = useRouter(); // Get the router object from Expo Router
 
   function handleChange(key: string, value: string) {
     setCredentials((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function authenticateUser() {
-    const res = await fetch(); 
+  const discovery = {
+    authorizationEndpoint: "https://accounts.spotify.com/authorize",
+    tokenEndpoint: "https://accounts.spotify.com/api/token",
+  };
+
+  const authEndpoint = "https://accounts.spotify.com/authorize";
+
+  const generateRandomString = (length: number) => {
+    const possible =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const values = crypto.getRandomValues(new Uint8Array(length));
+    return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+  };
+
+  // Performs SHA-256 hashing
+  const sha256 = async (plain: string) => {
+    const hash = CryptoJS.SHA256(plain);
+    return CryptoJS.enc.Base64.stringify(hash);
+  };
+
+  // URL-safe Base64 encoding
+  const base64encode = (input: string) => {
+    return input.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  };
+
+  // Spotify authentication function using Expo AuthSession
+  async function handleAuthentication() {
+    // Generate code verifier and code challenge
+    const codeVerifier = generateRandomString(64);
+    const hashed = await sha256(codeVerifier);
+    const codeChallenge = base64encode(hashed);
+
+    // Store the code verifier in AsyncStorage
+    await AsyncStorage.setItem("code_verifier", codeVerifier);
+
+    return codeChallenge;
   }
+
+  const codeChallenge = handleAuthentication();
+
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: "7425c2416852448a94bb199a9f49c0ba", // Replace with your actual Spotify client ID
+      scopes: [
+        "user-read-email",
+        "user-library-read",
+        "user-read-recently-played",
+        "user-top-read",
+        "playlist-read-private",
+        "playlist-read-collaborative",
+        "playlist-modify-public",
+      ],
+      usePKCE: false,
+      redirectUri: makeRedirectUri({
+        scheme: "shuffle",
+      }),
+    },
+    discovery
+  );
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      const { code } = response.params;
+      console.log("Authorization Code:", code);
+
+      router.push("/signup"); // This redirects to the signup page after login
+    }
+  }, [response]);
+
+  // async function handleAuthentication() {
+  //   // try {
+  //   //   const res = await fetch("http://10.60.1.177:3000/auth/authorize");
+  //   //   console.log(res.json());
+  //   // } catch (err) {
+  //   //   console.log(err);
+  //   // }
+
+  //   // Generates a random string for the code verifier
+  //   const generateRandomString = (length: number) => {
+  //     const possible =
+  //       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  //     const values = crypto.getRandomValues(new Uint8Array(length));
+  //     return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+  //   };
+
+  //   // Performs SHA-256 hashing
+  //   const sha256 = async (plain: string) => {
+  //     const hash = CryptoJS.SHA256(plain);
+  //     return CryptoJS.enc.Base64.stringify(hash);
+  //   };
+
+  //   // URL-safe Base64 encoding
+  //   const base64encode = (input: string) => {
+  //     return input.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  //   };
+
+  //   // Spotify authentication function using Expo AuthSession
+  //   async function handleAuthentication() {
+  //     try {
+  //       // Generate code verifier and code challenge
+  //       const codeVerifier = generateRandomString(64);
+  //       const hashed = await sha256(codeVerifier);
+  //       const codeChallenge = base64encode(hashed);
+
+  //       // Store the code verifier in AsyncStorage
+  //       await AsyncStorage.setItem("code_verifier", codeVerifier);
+
+  //       // Spotify OAuth settings
+  //       const clientId = "YOUR_SPOTIFY_CLIENT_ID"; // Replace with your actual client ID
+  //       const redirectUri = AuthSession.makeRedirectUri();
+  //       const scope = "user-read-private user-read-email";
+
+  //       const authUrl = `${authEndpoint}?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
+  //         redirectUri
+  //       )}&scope=${encodeURIComponent(
+  //         scope
+  //       )}&code_challenge_method=S256&code_challenge=${codeChallenge}`;
+
+  //       const result = await AuthSession.startAsync({
+  //         authUrl,
+  //         returnUrl: redirectUri,
+  //       });
+
+  //       if (result.type === "success") {
+  //         console.log("Authentication success!", result.params.code);
+  //         // Handle the returned authorization code (result.params.code) here
+  //         // Exchange it for access token via your backend or directly
+  //       } else {
+  //         console.log("Authentication failed or cancelled.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error during authentication:", error);
+  //     }
+  //   }
+  // }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -33,8 +181,8 @@ export default function Login() {
           value={credentials.password}
         />
 
-        <TouchableOpacity onPress={authenticateUser} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TouchableOpacity onPress={() => promptAsync()} style={styles.button}>
+          <Text style={styles.buttonText}>Login with Spotify</Text>
         </TouchableOpacity>
 
         <Link href="/signup" style={styles.link}>
@@ -51,8 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Centers content vertically
     alignItems: "center", // Centers content horizontally
     backgroundColor: "#f9f9f9",
-    width: "100%"
-    
+    width: "100%",
   },
   container: {
     width: "100%", // Full width container
