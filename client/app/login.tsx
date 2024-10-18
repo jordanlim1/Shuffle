@@ -14,12 +14,15 @@ import CryptoJS from "crypto-js";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
-import { client_id, authorizationEndpoint, tokenEndpoint } from "@env";
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const navigate = useNavigation();
+  const [codeChallenge, setCodeChallenge] = useState("");
   const router = useRouter();
+
+  const clientId = process.env.EXPO_PUBLIC_CLIENT_ID;
+  const authorizationEndpoint = process.env.EXPO_PUBLIC_AUTHORIZATION_ENDPOINT;
+  const tokenEndpoint = process.env.EXPO_PUBLIC_TOKEN_ENDPOINT;
 
   function handleChange(key: string, value: string) {
     setCredentials((prev) => ({ ...prev, [key]: value }));
@@ -43,24 +46,29 @@ export default function Login() {
   };
 
   const base64encode = (input: string) => {
-    return input.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+    return input.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   };
 
   async function handleAuthentication() {
     const codeVerifier = generateRandomString(64);
-    const hashed = await sha256(codeVerifier);
+    const encodedCodeVerifier = base64encode(btoa(codeVerifier));
+
+    const hashed = await sha256(encodedCodeVerifier);
     const codeChallenge = base64encode(hashed);
 
-    await AsyncStorage.setItem("code_verifier", codeVerifier);
+    await AsyncStorage.setItem("code_verifier", encodedCodeVerifier);
 
-    return codeChallenge;
+    console.log("differece", codeVerifier, encodedCodeVerifier);
+    setCodeChallenge(codeChallenge);
   }
 
-  const codeChallenge = handleAuthentication();
+  useEffect(() => {
+    handleAuthentication();
+  }, []);
 
   const [request, response, promptAsync] = useAuthRequest(
     {
-      clientId: client_id,
+      clientId: clientId!,
       scopes: [
         "user-read-email",
         "user-library-read",
@@ -70,10 +78,11 @@ export default function Login() {
         "playlist-read-collaborative",
         "playlist-modify-public",
       ],
-      usePKCE: false,
+      usePKCE: true,
       redirectUri: makeRedirectUri({
         scheme: "shuffle",
       }),
+      codeChallenge: codeChallenge,
     },
     discovery
   );
@@ -83,9 +92,44 @@ export default function Login() {
       const { code } = response.params;
       console.log("Authorization Code:", code);
 
+      getAccessToken(code);
       router.push("/signup"); // This redirects to the signup page after login
     }
   }, [response]);
+
+  async function getAccessToken(code: string) {
+    let codeVerifier = await AsyncStorage.getItem("code_verifier");
+
+    if (!codeVerifier) {
+      throw new Error("Code verifier not found");
+    }
+
+    const payload = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        client_id: clientId!,
+        grant_type: "authorization_code",
+        code,
+        redirect_uri: makeRedirectUri({
+          scheme: "shuffle",
+        }),
+        code_verifier: request?.codeVerifier!,
+      }).toString(),
+    };
+
+    const body = await fetch(tokenEndpoint!, payload);
+    const response = await body.json();
+
+    console.log("Response from Spotify Token Endpoint:", response);
+    if (response.access_token) {
+      await AsyncStorage.setItem("access_token", response.access_token);
+    } else {
+      throw new Error("Failed to retrieve access token");
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
