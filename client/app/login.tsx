@@ -18,6 +18,7 @@ import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [codeChallenge, setCodeChallenge] = useState("");
+  const [artists, setArtists] = useState<{ [key: string]: string }[]>();
   const router = useRouter();
 
   const clientId = process.env.EXPO_PUBLIC_CLIENT_ID;
@@ -89,7 +90,6 @@ export default function Login() {
   useEffect(() => {
     if (response?.type === "success") {
       const { code } = response.params;
-      console.log("Authorization Code:", code);
 
       getAccessToken(code);
       router.push("/signup"); // This redirects to the signup page after login
@@ -143,13 +143,21 @@ export default function Login() {
 
     const data = await response.json();
 
-    let artists = [];
+    const artists = [];
 
     for (let i = 0; i < data.items.length; i++) {
-      artists.push(data.items[i].name);
+      const artistIcons = data.items[i].images;
+
+      artists.push({
+        name: data.items[i].name as string,
+        icon: artistIcons[artistIcons.length - 1].url,
+      });
     }
 
+    console.log(data.items[0].images[2].url);
+
     console.log("profile", artists);
+    setArtists(artists);
   }
 
   return (
@@ -162,7 +170,6 @@ export default function Login() {
           onChangeText={(text) => handleChange("email", text)}
           value={credentials.email}
         />
-
         <Text style={styles.label}>Password</Text>
         <TextInput
           style={styles.input}
