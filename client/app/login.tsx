@@ -70,10 +70,10 @@ export default function Login() {
     {
       clientId: clientId!,
       scopes: [
+        "user-top-read",
         "user-read-email",
         "user-library-read",
         "user-read-recently-played",
-        "user-top-read",
         "playlist-read-private",
         "playlist-read-collaborative",
         "playlist-modify-public",
@@ -82,7 +82,7 @@ export default function Login() {
       redirectUri: makeRedirectUri({
         scheme: "shuffle",
       }),
-      codeChallenge: codeChallenge,
+      codeChallenge: codeChallenge || "",
     },
     discovery
   );
@@ -132,32 +132,49 @@ export default function Login() {
   }
 
   async function getProfile(accessToken: string) {
-    const response = await fetch(
-      "https://api.spotify.com/v1/me/top/artists?limit=5",
-      {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
+    try {
+      const response = await fetch(
+        "https://api.spotify.com/v1/me/top/artists?limit=5",
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.error(
+          "Spotify API returned an error:",
+          response.status,
+          response.statusText
+        );
+        const errorData = await response.json();
+        console.error("Error details:", errorData);
+        throw new Error(
+          `Spotify API Error: ${errorData.error.message || "Unknown error"}`
+        );
       }
-    );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    const artists = [];
+      console.log(data);
+      const topArtists = [];
 
-    for (let i = 0; i < data.items.length; i++) {
-      const artistIcons = data.items[i].images;
+      for (let i = 0; i < data.items.length; i++) {
+        const artistIcons = data.items[i].images;
 
-      artists.push({
-        name: data.items[i].name as string,
-        icon: artistIcons[artistIcons.length - 1].url,
-      });
+        topArtists.push({
+          name: data.items[i].name as string,
+          icon: artistIcons[artistIcons.length - 1].url,
+        });
+      }
+
+      console.log("profile", topArtists);
+      setArtists(topArtists);
+    } catch (err) {
+      console.log("im in error");
+      console.log("Error" + err);
     }
-
-    console.log(data.items[0].images[2].url);
-
-    console.log("profile", artists);
-    setArtists(artists);
   }
 
   return (
