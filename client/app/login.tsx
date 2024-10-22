@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { Link } from "expo-router";
 import { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 import "react-native-get-random-values";
 import CryptoJS from "crypto-js";
 import { useRouter } from "expo-router";
@@ -82,7 +81,7 @@ export default function Login() {
       redirectUri: makeRedirectUri({
         scheme: "shuffle",
       }),
-      codeChallenge: codeChallenge || "",
+      codeChallenge: codeChallenge,
     },
     discovery
   );
@@ -92,7 +91,7 @@ export default function Login() {
       const { code } = response.params;
 
       getAccessToken(code);
-      router.push("/signup"); // This redirects to the signup page after login
+      router.push("/signup");
     }
   }, [response]);
 
@@ -157,7 +156,6 @@ export default function Login() {
 
       const data = await response.json();
 
-      console.log(data);
       const topArtists = [];
 
       for (let i = 0; i < data.items.length; i++) {
@@ -169,10 +167,8 @@ export default function Login() {
         });
       }
 
-      console.log("profile", topArtists);
       setArtists(topArtists);
     } catch (err) {
-      console.log("im in error");
       console.log("Error" + err);
     }
   }
