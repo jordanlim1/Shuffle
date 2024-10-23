@@ -10,6 +10,18 @@ const cors = require("cors");
 const PORT = 3000;
 app.use(express.json());
 app.use(cors());
+const mongoose = require('mongoose');
+
+const MONGO_URI = "mongodb+srv://jordanlim1:rawrrawr@cluster0.dmqsn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+mongoose.connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: 'shuffle'
+}).then(() => console.log('Connected to MongoDB...'))
+.catch(err => console.log('MongoDB error: ', err))
+
+
 const authRouter = require("./routers/authRouter");
 
 app.use("/auth", authRouter);
