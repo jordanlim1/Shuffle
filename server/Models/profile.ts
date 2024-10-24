@@ -11,6 +11,7 @@ const profileSchema = new Schema({
   artists: { type: Object, required: true },
   images: { type: Object, required: true },
   verified: { type: Boolean, default: false },
+  orientation: {type: String, required: true},
   verificationToken: String,
   crushes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   receivedLikes: [{ type: Schema.Types.ObjectId, ref: "User" }],

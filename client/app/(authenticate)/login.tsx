@@ -13,11 +13,9 @@ import CryptoJS from "crypto-js";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
-
+import { saveRegistrationInfo } from "../registrationUtils";
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
   const [codeChallenge, setCodeChallenge] = useState("");
   const [artists, setArtists] = useState<{ [key: string]: string }[]>();
   const router = useRouter();
@@ -164,8 +162,9 @@ export default function Login() {
       const artists = await artistsData.json();
       const credentials = await credentialsData.json();
 
-      setName(credentials.display_name);
-      setEmail(credentials.email);
+      saveRegistrationInfo("name", credentials.display_name)
+      saveRegistrationInfo("email", credentials.email)
+
       const topArtists = [];
 
       for (let i = 0; i < artists.items.length; i++) {
