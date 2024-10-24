@@ -16,6 +16,8 @@ import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [codeChallenge, setCodeChallenge] = useState("");
   const [artists, setArtists] = useState<{ [key: string]: string }[]>();
   const router = useRouter();
@@ -91,7 +93,7 @@ export default function Login() {
       const { code } = response.params;
 
       getAccessToken(code);
-      // router.push("/signup");
+      router.push("/age");
     }
   }, [response]);
 
@@ -131,7 +133,7 @@ export default function Login() {
 
   async function getProfile(accessToken: string) {
     try {
-      const response = await fetch(
+      const artistsData = await fetch(
         "https://api.spotify.com/v1/me/top/artists?limit=5",
         {
           headers: {
@@ -140,29 +142,37 @@ export default function Login() {
         }
       );
 
-      if (!response.ok) {
+      const credentialsData = await fetch("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      });
+
+      if (!artistsData.ok || !credentialsData.ok) {
         console.error(
           "Spotify API returned an error:",
-          response.status,
-          response.statusText
+          artistsData.status,
+          artistsData.statusText
         );
-        const errorData = await response.json();
+        const errorData = await artistsData.json();
         console.error("Error details:", errorData);
         throw new Error(
           `Spotify API Error: ${errorData.error.message || "Unknown error"}`
         );
       }
 
-      const data = await response.json();
+      const artists = await artistsData.json();
+      const credentials = await credentialsData.json();
 
-      console.log(data)
+      setName(credentials.display_name);
+      setEmail(credentials.email);
       const topArtists = [];
 
-      for (let i = 0; i < data.items.length; i++) {
-        const artistIcons = data.items[i].images;
+      for (let i = 0; i < artists.items.length; i++) {
+        const artistIcons = artists.items[i].images;
 
         topArtists.push({
-          name: data.items[i].name as string,
+          name: artists.items[i].name as string,
           icon: artistIcons[artistIcons.length - 1].url,
         });
       }
@@ -174,23 +184,30 @@ export default function Login() {
   }
 
   // async function createProfile() {
-  //   const response = await fetch("/createProfile", {
-  //     method: "POST",
-  //     headers: {
-  //       "content-type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       artists: artists,
-  //       email: email
-  //     }),
-
-  //   })
+  //   try {
+  //     const response = await fetch(
+  //       "http://192.168.1.5:3000/auth/createProfile",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "content-type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           artists: artists,
+  //           email: email,
+  //           name: name,
+  //         }),
+  //       }
+  //     );
+  //   } catch (err) {
+  //     console.log("Error in create profile", err);
+  //   }
   // }
 
   // useEffect(() => {
   //   if (!artists) return;
-  //   else createProfile()
-  // }, [artists])
+  //   else createProfile();
+  // }, [artists]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -215,9 +232,9 @@ export default function Login() {
           <Text style={styles.buttonText}>Login with Spotify</Text>
         </TouchableOpacity>
 
-        <Link href="/signup" style={styles.link}>
+        <TouchableOpacity>
           <Text> Create Account </Text>
-        </Link>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
