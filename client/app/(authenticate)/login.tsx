@@ -90,7 +90,6 @@ export default function Login() {
       const { code } = response.params;
 
       getAccessToken(code);
-      router.push("/age");
     }
   }, [response]);
 
@@ -161,8 +160,8 @@ export default function Login() {
       const artists = await artistsData.json();
       const credentials = await credentialsData.json();
 
-      saveRegistrationInfo("name", credentials.display_name)
-      saveRegistrationInfo("email", credentials.email)
+      saveRegistrationInfo("name", credentials.display_name);
+      saveRegistrationInfo("email", credentials.email);
 
       const topArtists = [];
 
@@ -176,6 +175,7 @@ export default function Login() {
       }
 
       setArtists(topArtists);
+      router.push("/personalInfo");
     } catch (err) {
       console.log("Error" + err);
     }

@@ -8,11 +8,13 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mongoose": "^8.7.2",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.7"
   },
   "devDependencies": {
     "@types/connect": "^3.4.38",
     "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.7.5",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
