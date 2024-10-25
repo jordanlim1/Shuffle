@@ -10,7 +10,7 @@ import { Link } from "expo-router";
 import { useState, useEffect } from "react";
 import "react-native-get-random-values";
 import CryptoJS from "crypto-js";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { saveRegistrationInfo } from "../registrationUtils";
@@ -18,7 +18,6 @@ export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [codeChallenge, setCodeChallenge] = useState("");
   const [artists, setArtists] = useState<{ [key: string]: string }[]>();
-  const router = useRouter();
 
   const clientId = process.env.EXPO_PUBLIC_CLIENT_ID;
   const authorizationEndpoint = process.env.EXPO_PUBLIC_AUTHORIZATION_ENDPOINT;
