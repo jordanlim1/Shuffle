@@ -1,13 +1,14 @@
-import { Button, StyleSheet, Text, View, Image } from "react-native";
+import { Button, StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const images = () => {
-  const [image, setImage] = useState<string | null>(null);
+  const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
   const formData = new FormData();
 
-  const pickImage = async () => {
+  const pickImage = async (index: number) => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -17,42 +18,54 @@ const images = () => {
       base64: true,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
-
-      try {
-        // Fetch the image as a Blob
-        const response = await fetch(image!);
-        const blob = await response.blob();
-
-        // Create FormData and append the Blob
-        const formData = new FormData();
-        formData.append("image", blob);
-
-        // Send the FormData to the backend
-        const res = await fetch("http://localhost:3000/query/images", {
-          method: "POST",
-          body: formData,
-        });
-      } catch (error) {
-        console.error("Error uploading image:", error);
-      }
+      const newImages = [...images];
+      newImages[index] = result.assets[0].uri; // Replace empty slot at specified index
+      setImages(newImages);
     }
   };
 
-  async function handlePress() {
-    console.log("clicked");
-    console.log(formData);
-  }
+  const addImages = async () => {
+    try {
+      console.log(images);
+      const formData = new FormData();
+      for (const uri of images) {
+        if (uri) {
+          const response = await fetch(uri);
+          const blob = await response.blob();
+          formData.append("images", blob, `photo-${Date.now()}.jpg`);
+        }
+      }
+
+      // Send the FormData to the backend
+      const res = await fetch("http://localhost:3000/query/images", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      console.log(data);
+      await AsyncStorage.setItem("images", data);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <Text>images</Text>
-        <Button title="Pick an image from camera roll" onPress={pickImage} />
-        {image && <Image source={{ uri: image }} style={styles.image} />}
-        <Button title="post" onPress={handlePress} />
+        {images.map((imageUri: string | null, idx: number) =>
+          imageUri !== "" ? (
+            <Image key={idx} source={{ uri: imageUri! }} style={styles.image} />
+          ) : (
+            <Pressable key={idx} onPress={() => pickImage(idx)}>
+              <Text>Upload Image</Text>
+            </Pressable>
+          )
+        )}
+
+        <Button title="post" onPress={addImages} />
+        <Pressable>Finish Profile</Pressable>
       </View>
     </SafeAreaView>
   );
@@ -65,7 +78,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "black",
   },
   image: {
     width: 200,

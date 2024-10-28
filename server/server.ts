@@ -13,10 +13,16 @@ app.use(cors());
 const mongoose = require("mongoose");
 const authRouter = require("./routers/authRouter");
 const queryRouter = require("./routers/queryRouter");
+require("dotenv").config();
 
-const MONGO_URI =
-  "mongodb+srv://jordanlim1:rawrrawr@cluster0.dmqsn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const dbURL = process.env.MONGO_URI;
 
+import { S3Client, S3ClientConfig, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const bucketName = process.env.BUCKET_NAME;
+const bucketRegion = process.env.BUCKET_REGION;
+const accessKey = process.env.AWS_SECRET_ACCESS_KEY;
+const secretAccessKey = process.env.AWS_ACCESS_KEY_ID;
 // mongoose
 //   .connect(MONGO_URI, {
 //     useNewUrlParser: true,
@@ -25,6 +31,14 @@ const MONGO_URI =
 //   })
 //   .then(() => console.log("Connected to MongoDB..."))
 //   .catch((err) => console.log("MongoDB error: ", err));
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion,
+} as S3ClientConfig);
 
 app.use("/auth", authRouter);
 app.use("/query", queryRouter);
