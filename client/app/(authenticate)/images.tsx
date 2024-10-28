@@ -6,10 +6,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
-  const formData = new FormData();
 
   const pickImage = async (index: number) => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -20,7 +18,7 @@ const images = () => {
 
     if (!result.canceled) {
       const newImages = [...images];
-      newImages[index] = result.assets[0].uri; // Replace empty slot at specified index
+      newImages[index] = result.assets[0].uri;
       setImages(newImages);
     }
   };
@@ -51,12 +49,24 @@ const images = () => {
     }
   };
 
+  function handleDelete(idx: number) {
+    const updatedImages = [...images];
+    updatedImages[idx] = "";
+
+    setImages(updatedImages);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
         {images.map((imageUri: string | null, idx: number) =>
           imageUri !== "" ? (
-            <Image key={idx} source={{ uri: imageUri! }} style={styles.image} />
+            <View key={idx}>
+              <Image source={{ uri: imageUri! }} style={styles.image} />
+              <Pressable onPress={() => handleDelete(idx!)}>
+                <Text>Delete</Text>
+              </Pressable>
+            </View>
           ) : (
             <Pressable key={idx} onPress={() => pickImage(idx)}>
               <Text>Upload Image</Text>
@@ -65,7 +75,9 @@ const images = () => {
         )}
 
         <Button title="post" onPress={addImages} />
-        <Pressable>Finish Profile</Pressable>
+        <Pressable>
+          <Text>Finish Profile</Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );
