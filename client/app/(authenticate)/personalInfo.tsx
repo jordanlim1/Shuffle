@@ -59,14 +59,20 @@ const personalInfo = () => {
       <Text>Name</Text>
       <TextInput
         value={name}
-        onChangeText={(text) => setName(text)}
+        onChangeText={(text) => {
+          setName(text);
+          saveRegistrationInfo("name", name);
+        }}
         style={styles.textInput}
       />
 
       <Text>Email</Text>
       <TextInput
         value={email}
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={(text) => {
+          setEmail(text);
+          saveRegistrationInfo("email", email);
+        }}
         style={styles.textInput}
       />
 

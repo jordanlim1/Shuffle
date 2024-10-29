@@ -7,11 +7,18 @@ const upload = multer({ storage: storage });
 
 router.post(
   "/images",
-  upload.array("images", 6),
+  upload.array("images"),
   queryController.addImages,
   (req: Request, res: Response): void => {
     res.status(200).json(res.locals.images);
   }
 );
 
+router.post(
+  "/createProfile",
+  queryController.createProfile,
+  (req: Request, res: Response): void => {
+    res.status(200).json();
+  }
+);
 module.exports = router;

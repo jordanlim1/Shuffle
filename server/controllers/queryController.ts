@@ -26,6 +26,7 @@ const images: string[] = [];
 
 const queryController = {
   addImages: async function (req: Request, res: Response, next: NextFunction) {
+    console.log(req.files);
     if (Array.isArray(req.files)) {
       for (const img of req.files) {
         const imgName = randomImageName();
@@ -53,6 +54,16 @@ const queryController = {
     }
 
     res.locals.images = images;
+    return next();
+  },
+
+  createProfile: async function (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    console.log(req.body);
+
     return next();
   },
 };

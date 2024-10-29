@@ -2,6 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
 import { router, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { saveRegistrationInfo } from "../registrationUtils";
 
 const orientation = () => {
   const [preferences, setPreferences] = useState("");
@@ -11,13 +12,18 @@ const orientation = () => {
     { value: "Both", icon: "" },
   ];
 
+  function handlePress(preference: string) {
+    setPreferences(preference);
+    saveRegistrationInfo("orientation", preference);
+  }
+
   return (
     <SafeAreaView>
       <View>
         <Text>I am interested in...</Text>
         {options.map((preference, idx) => {
           return (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => handlePress(preference.value)}>
               <Text>{preference.value} </Text>
             </TouchableOpacity>
           );

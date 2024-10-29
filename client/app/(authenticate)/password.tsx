@@ -5,17 +5,26 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { saveRegistrationInfo } from "../registrationUtils";
 
 const password = () => {
+  const [password, setPassWord] = useState("");
+
   return (
     <SafeAreaView>
       <View>
         <Text>New Password</Text>
-        <TextInput textContentType="password" />
+        <TextInput
+          textContentType="password"
+          onChangeText={(text) => {
+            setPassWord(text);
+            saveRegistrationInfo("password", password);
+          }}
+        />
 
         <Text>Confirm Password</Text>
         <TextInput textContentType="password" />

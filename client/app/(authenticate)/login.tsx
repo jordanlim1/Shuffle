@@ -174,7 +174,9 @@ export default function Login() {
         });
       }
 
-      setArtists(topArtists);
+      // setArtists(topArtists);
+
+      saveRegistrationInfo("artists", JSON.stringify(topArtists));
       router.push("/personalInfo");
     } catch (err) {
       console.log("Error" + err);

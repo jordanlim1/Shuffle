@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getResgistrationInfo } from "../registrationUtils";
+import password from "./password";
 
 const images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
@@ -13,7 +15,6 @@ const images = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-      base64: true,
     });
 
     if (!result.canceled) {
@@ -25,7 +26,6 @@ const images = () => {
 
   const addImages = async () => {
     try {
-      console.log(images);
       const formData = new FormData();
       for (const uri of images) {
         if (uri) {
@@ -35,15 +35,15 @@ const images = () => {
         }
       }
 
+      console.log("formDAta", formData);
       // Send the FormData to the backend
-      const res = await fetch("http://localhost:3000/query/images", {
+      const res = await fetch("http://192.168.1.35:3000/query/images", {
         method: "POST",
         body: formData,
       });
 
       const data = await res.json();
       console.log(data);
-      await AsyncStorage.setItem("images", data);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -54,6 +54,35 @@ const images = () => {
     updatedImages[idx] = "";
 
     setImages(updatedImages);
+  }
+
+  async function finishProfile() {
+    const name = await getResgistrationInfo("name");
+    const email = await getResgistrationInfo("email");
+    const age = await getResgistrationInfo("age");
+    const gender = await getResgistrationInfo("gender");
+    const orientation = await getResgistrationInfo("orientation");
+    const password = await getResgistrationInfo("password");
+    const artists = await getResgistrationInfo("artists");
+
+    console.log(name, email, gender, age, orientation, artists);
+
+    const body = {
+      name: name,
+      email: email,
+      password: password,
+      age: age,
+      gender: gender,
+      orientation: orientation,
+      artists: artists,
+      images: images,
+    };
+
+    const res = await fetch("http://192.168.1.35:3000/query/createProfile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
   }
 
   return (
@@ -75,7 +104,7 @@ const images = () => {
         )}
 
         <Button title="post" onPress={addImages} />
-        <Pressable>
+        <Pressable onPress={finishProfile}>
           <Text>Finish Profile</Text>
         </Pressable>
       </View>
