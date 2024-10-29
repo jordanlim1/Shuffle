@@ -22,11 +22,11 @@ const s3 = new S3Client({
   region: bucketRegion,
 } as S3ClientConfig);
 
-const images: string[] = [];
-
 const queryController = {
   addImages: async function (req: Request, res: Response, next: NextFunction) {
     console.log(req.files);
+    const images: string[] = [];
+
     if (Array.isArray(req.files)) {
       for (const img of req.files) {
         const imgName = randomImageName();

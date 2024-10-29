@@ -31,13 +31,17 @@ const images = () => {
         if (uri) {
           const response = await fetch(uri);
           const blob = await response.blob();
-          formData.append("images", blob, `photo-${Date.now()}.jpg`);
+          formData.append("images", {
+            uri: uri,
+            type: "image/jpeg", // Set correct MIME type
+            name: `photo-${Date.now()}.jpg`, // Unique filename
+          } as any);
         }
       }
 
       console.log("formDAta", formData);
       // Send the FormData to the backend
-      const res = await fetch("http://192.168.1.35:3000/query/images", {
+      const res = await fetch("http://192.168.1.5:3000/query/images", {
         method: "POST",
         body: formData,
       });
