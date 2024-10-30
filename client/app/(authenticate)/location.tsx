@@ -1,9 +1,16 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getDistance } from "geolib";
 import * as Location from "expo-location";
 import { saveRegistrationInfo } from "../registrationUtils";
+import Slider from "@react-native-community/slider";
 
 const location = () => {
   const [locationError, setLocationError] = useState("");
@@ -15,14 +22,19 @@ const location = () => {
     isoCountryCode: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState(0);
+
   const getLocation = async () => {
     try {
+      setLoading(true);
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status !== "granted") {
         setLocationError(
           "Location permissions denied, please update settings."
         );
+        setLoading(false);
         return;
       }
 
@@ -46,6 +58,9 @@ const location = () => {
       saveRegistrationInfo("location", location);
     } catch (err) {
       console.log("Error requesting location: ", err);
+      setLocationError("Failed to retrieve location.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,20 +68,39 @@ const location = () => {
     <SafeAreaView>
       <View>
         <Text>Where are you located?</Text>
+
         {locationError ? (
           <View>
-            <Text> {locationError} </Text>
+            <Text>{locationError}</Text>
           </View>
         ) : (
           <View>
-            <Text>
-              {`${location.district} ${location.city}, ${location.region} ${location.postalCode} ${location.isoCountryCode} `}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="large" color="#0000ff" />
+            ) : location.city ? (
+              <Text>
+                {`${location.district} ${location.city}, ${location.region} ${location.postalCode} ${location.isoCountryCode} `}
+              </Text>
+            ) : (
+              <TouchableOpacity onPress={getLocation}>
+                <Text>Press here to grab your location</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
-        <TouchableOpacity onPress={getLocation}>
-          <Text>Press here to grab your location</Text>
-        </TouchableOpacity>
+        <View>
+          <Slider
+            style={{ width: 300, height: 40 }}
+            minimumValue={0}
+            maximumValue={300}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+            thumbTintColor="#0000FF"
+            value={value}
+            onValueChange={(newValue) => setValue(Math.floor(newValue))}
+          />
+          <Text>Value: {value}</Text>
+        </View>
       </View>
     </SafeAreaView>
   );

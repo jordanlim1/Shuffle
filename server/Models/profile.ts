@@ -10,6 +10,7 @@ const profileSchema = new Schema({
   bio: { type: String },
   artists: { type: Object, required: true },
   images: { type: Object, required: true },
+  distance: { type: Number, required: true },
   verified: { type: Boolean, default: false },
   orientation: { type: String, required: true },
   verificationToken: String,
