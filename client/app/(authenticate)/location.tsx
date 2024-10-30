@@ -11,6 +11,8 @@ import { getDistance } from "geolib";
 import * as Location from "expo-location";
 import { saveRegistrationInfo } from "../registrationUtils";
 import Slider from "@react-native-community/slider";
+import { debounce } from "lodash";
+import { router } from "expo-router";
 
 const location = () => {
   const [locationError, setLocationError] = useState("");
@@ -24,6 +26,13 @@ const location = () => {
 
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(0);
+
+  const saveRegistrationInfoDebounced = debounce(
+    (screenName: string, value: number) => {
+      saveRegistrationInfo(screenName, value);
+    },
+    300
+  );
 
   const getLocation = async () => {
     try {
@@ -44,7 +53,6 @@ const location = () => {
         longitude: location.coords.longitude,
       });
 
-      console.log(address[0]);
       const { city, district, region, postalCode, isoCountryCode } = address[0];
 
       setLocation({
@@ -97,10 +105,18 @@ const location = () => {
             maximumTrackTintColor="#000000"
             thumbTintColor="#0000FF"
             value={value}
-            onValueChange={(newValue) => setValue(Math.floor(newValue))}
+            onValueChange={(newValue) => {
+              const roundedValue = Math.floor(newValue);
+              setValue(roundedValue);
+              saveRegistrationInfoDebounced("distance", roundedValue);
+            }}
           />
           <Text>Value: {value}</Text>
         </View>
+
+        <TouchableOpacity onPress={() => router.push("/gender")}>
+          <Text>Next</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

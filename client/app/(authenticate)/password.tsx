@@ -30,7 +30,7 @@ const password = () => {
         <TextInput textContentType="password" />
       </View>
 
-      <TouchableOpacity onPress={() => router.push("/gender")}>
+      <TouchableOpacity onPress={() => router.push("/location")}>
         <Text>Next</Text>
       </TouchableOpacity>
     </SafeAreaView>
