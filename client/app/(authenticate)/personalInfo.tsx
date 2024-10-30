@@ -51,7 +51,7 @@ const personalInfo = () => {
     const birthYear = dayjs(currentDate).year();
     const calculatedAge = currentYear - birthYear;
     setAge(calculatedAge);
-    saveRegistrationInfo("age", JSON.stringify(age));
+    saveRegistrationInfo("age", age);
   };
 
   return (
