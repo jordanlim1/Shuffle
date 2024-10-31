@@ -146,7 +146,7 @@ const personalInfo = () => {
     const errors = {
       name: !name,
       email: !email,
-      age: !age,
+      age: birthdayPlaceholder === "Enter your birthday",
       location: location === "Press here to grab your location",
     };
 
