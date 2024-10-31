@@ -13,15 +13,27 @@ import { router } from "expo-router";
 import { saveRegistrationInfo } from "../registrationUtils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { set } from "lodash";
 
 const Password = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState(
+    "Must contain a capital letter, a special character, a number, and be at least 8 characters."
+  );
+  const [error, setError] = useState(false);
   const dotScales = useRef([
     new Animated.Value(1),
     new Animated.Value(1),
     new Animated.Value(1),
   ]).current;
+
+  useEffect(() => {
+    validatePassword(password);
+    if (confirmPassword && password !== confirmPassword) {
+      setError(true);
+    } else setError(false);
+  }, [password, confirmPassword]);
 
   useEffect(() => {
     const animateDots = () => {
@@ -49,6 +61,32 @@ const Password = () => {
     animateDots();
   }, [dotScales]);
 
+  function handleNext() {
+    if (error || !confirmPassword || !password) return -1;
+    saveRegistrationInfo("password", password);
+    router.push("/gender");
+  }
+
+  const validatePassword = (text: string) => {
+    setError(true);
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const uppercaseRegex = /[A-Z]/;
+    let message = "";
+
+    if (text.length < 8) message = "Password must be at least 8 characters.";
+    else if (!specialCharRegex.test(text))
+      message = "Password must include a special character.";
+    else if (!uppercaseRegex.test(text))
+      message = "Password must include an uppercase letter.";
+    else message = ""; // No validation errors
+
+    setPasswordMessage(message);
+
+    if (!message) {
+      setError(false);
+      return true;
+    }
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -77,14 +115,13 @@ const Password = () => {
               style={styles.textInput}
               textContentType="password"
               secureTextEntry={true}
-              onChangeText={(text) => {
-                setPassword(text);
-                saveRegistrationInfo("password", text);
-              }}
+              onChangeText={(text) => setPassword(text)}
               placeholder="New Password"
               placeholderTextColor={"#D3D3D3"}
             />
+            {!password && <Text style={styles.errorText}>*</Text>}
           </View>
+          <Text style={styles.validationMessage}>{passwordMessage}</Text>
           <View style={styles.inputContainer}>
             <Ionicons
               name="lock-closed-outline"
@@ -100,20 +137,26 @@ const Password = () => {
               placeholder="Confirm Password"
               placeholderTextColor={"#D3D3D3"}
             />
+            {!confirmPassword && <Text style={styles.errorText}>*</Text>}
           </View>
+          {error && (
+            <Text style={styles.validationMessage}>
+              Passwords do not match.
+            </Text>
+          )}
         </View>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.floatingButton}
-            onPress={() => router.push("/personalInfo")}
+            onPress={() => {
+              router.push("/personalInfo");
+            }}
           >
             <AntDesign name="arrowleft" size={30} color="white" />
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={() => router.push("/gender")}
-          >
+          <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
             <AntDesign name="arrowright" size={30} color="white" />
           </TouchableOpacity>
         </View>
@@ -165,12 +208,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    marginBottom: 20,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
+    marginBottom: 5,
   },
   icon: {
     marginRight: 10,
@@ -201,7 +244,11 @@ const styles = StyleSheet.create({
     bottom: 20,
     flexDirection: "row",
   },
-
+  validationMessage: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+  },
   dotContainer: {
     display: "flex",
     flexDirection: "row",
@@ -210,5 +257,10 @@ const styles = StyleSheet.create({
     fontSize: 60,
     color: "#333",
     marginHorizontal: 2,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 18,
+    marginLeft: 5,
   },
 });

@@ -10,6 +10,7 @@ import {
   Button,
   Animated,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -41,7 +42,13 @@ const personalInfo = () => {
   const [locationError, setLocationError] = useState("");
   const [location, setLocation] = useState("Press here to grab your location");
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(50);
+  const [validationErrors, setValidationErrors] = useState({
+    name: false,
+    email: false,
+    age: false,
+    location: false,
+  });
 
   const dotScales = useRef([
     new Animated.Value(1),
@@ -117,7 +124,6 @@ const personalInfo = () => {
         longitude: location.coords.longitude,
       });
 
-      console.log(address);
       const { city, district, region, postalCode, isoCountryCode } = address[0];
       const formattedLocation = `${district} ${city}, ${region} ${postalCode} ${isoCountryCode}`;
 
@@ -126,6 +132,7 @@ const personalInfo = () => {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
+      setValidationErrors((prev) => ({ ...prev, location: false }));
       saveRegistrationInfo("formattedLocation", formattedLocation);
     } catch (err) {
       console.log("Error requesting location: ", err);
@@ -135,7 +142,23 @@ const personalInfo = () => {
     }
   };
 
-  // Handle date picker value changes
+  const handleNextPress = async () => {
+    const errors = {
+      name: !name,
+      email: !email,
+      age: !age,
+      location: location === "Press here to grab your location",
+    };
+
+    setValidationErrors(errors);
+
+    // Only proceed if all fields are filled
+    if (!Object.values(errors).includes(true)) {
+      const verified = await getStoredAccessToken();
+      router.push(verified ? "/gender" : "/password");
+    }
+  };
+
   const onChange = (
     event: DateTimePickerEvent,
     selectedDate: Date | undefined
@@ -151,7 +174,7 @@ const personalInfo = () => {
     const birthYear = dayjs(currentDate).year();
     const calculatedAge = currentYear - birthYear;
     setAge(calculatedAge);
-    saveRegistrationInfo("age", age);
+    setValidationErrors((prev) => ({ ...prev, age: false }));
   };
 
   async function getStoredAccessToken() {
@@ -206,12 +229,14 @@ const personalInfo = () => {
               value={name}
               onChangeText={(text) => {
                 setName(text);
+                setValidationErrors((prev) => ({ ...prev, name: false }));
                 saveRegistrationInfo("name", text);
               }}
               placeholder="Enter your name"
               placeholderTextColor={"#333"}
               style={styles.textInput}
             />
+            {validationErrors.name && <Text style={styles.errorText}>*</Text>}
           </View>
 
           <View style={styles.inputContainer}>
@@ -225,22 +250,26 @@ const personalInfo = () => {
               value={email}
               onChangeText={(text) => {
                 setEmail(text);
+                setValidationErrors((prev) => ({ ...prev, email: false }));
                 saveRegistrationInfo("email", text);
               }}
               placeholder="Enter your email"
               placeholderTextColor={"#333"}
               style={styles.textInput}
             />
+            {validationErrors.email && <Text style={styles.errorText}>*</Text>}
           </View>
 
           <View style={styles.inputContainer}>
             <Fontisto name="date" size={24} color="black" style={styles.icon} />
+
             <TouchableOpacity
               onPress={() => setShow(true)}
               style={styles.dateInput}
             >
               <Text style={styles.dateText}>{birthdayPlaceholder}</Text>
             </TouchableOpacity>
+            {validationErrors.age && <Text style={styles.errorText}>*</Text>}
           </View>
         </View>
 
@@ -267,16 +296,8 @@ const personalInfo = () => {
                 <Text style={styles.locationText}>{location}</Text>
               </View>
             </TouchableOpacity>
-
-            // <TouchableOpacity
-            //   onPress={getLocation}
-            //   style={styles.locationTouchable}
-            // >
-            //   <View style={styles.locationContent}>
-            //     <Text style={styles.locationText}>{locationPlaceholder}</Text>
-            //   </View>
-            // </TouchableOpacity>
           )}
+          {validationErrors.location && <Text style={styles.errorText}>*</Text>}
         </View>
 
         <View style={styles.sliderContainer}>
@@ -301,10 +322,7 @@ const personalInfo = () => {
 
         <TouchableOpacity
           style={styles.floatingButton}
-          onPress={async () => {
-            const verified = await getStoredAccessToken();
-            router.push(verified ? "/gender" : "/password");
-          }}
+          onPress={handleNextPress}
         >
           <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
@@ -328,7 +346,10 @@ const personalInfo = () => {
               />
               <TouchableOpacity
                 style={styles.closeButton}
-                onPress={() => setShow(false)}
+                onPress={() => {
+                  saveRegistrationInfo("age", age);
+                  setShow(false);
+                }}
               >
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
@@ -479,6 +500,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+
   dateInput: {
     flex: 1,
   },
@@ -503,10 +525,15 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
+  errorText: {
+    color: "red",
+    fontSize: 18,
+    marginLeft: 5,
+  },
   closeButton: {
-    marginTop: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    marginTop: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
     backgroundColor: "#ff5a79",
     borderRadius: 8,
   },
