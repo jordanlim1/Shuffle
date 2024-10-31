@@ -52,7 +52,9 @@ const location = () => {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
+      console.log(location);
 
+      console.log(address);
       const { city, district, region, postalCode, isoCountryCode } = address[0];
 
       setLocation({

@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getResgistrationInfo } from "../registrationUtils";
-import password from "./password";
 
 const images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
@@ -39,8 +38,6 @@ const images = () => {
         }
       }
 
-      console.log("formDAta", formData);
-      // Send the FormData to the backend
       const res = await fetch("http://192.168.1.5:3000/query/images", {
         method: "POST",
         body: formData,

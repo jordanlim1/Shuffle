@@ -7,9 +7,10 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="personalInfo" options={{ headerShown: false }} />
-      <Stack.Screen name="gender"  />
-      <Stack.Screen name="orientation"  />
+      <Stack.Screen name="password" options={{ headerShown: false }} />
 
+      <Stack.Screen name="gender" />
+      <Stack.Screen name="orientation" />
     </Stack>
   );
 }

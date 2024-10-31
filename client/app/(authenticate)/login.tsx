@@ -5,6 +5,7 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Link } from "expo-router";
 import { useState, useEffect } from "react";
@@ -174,8 +175,6 @@ export default function Login() {
         });
       }
 
-      // setArtists(topArtists);
-
       saveRegistrationInfo("artists", JSON.stringify(topArtists));
       router.push("/personalInfo");
     } catch (err) {
@@ -183,58 +182,44 @@ export default function Login() {
     }
   }
 
-  // async function createProfile() {
-  //   try {
-  //     const response = await fetch(
-  //       "http://192.168.1.5:3000/auth/createProfile",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "content-type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           artists: artists,
-  //           email: email,
-  //           name: name,
-  //         }),
-  //       }
-  //     );
-  //   } catch (err) {
-  //     console.log("Error in create profile", err);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (!artists) return;
-  //   else createProfile();
-  // }, [artists]);
-
   return (
     <SafeAreaView style={styles.safeArea}>
+      <View>
+        {" "}
+        <Text style={styles.title}>Shuffle</Text>
+      </View>
       <View style={styles.container}>
-        <Text style={styles.label}>Email</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter your email"
+          placeholder="Email"
           onChangeText={(text) => handleChange("email", text)}
           value={credentials.email}
         />
-        <Text style={styles.label}>Password</Text>
+
         <TextInput
           style={styles.input}
-          placeholder="Enter your password"
+          placeholder="Password"
           secureTextEntry={true}
           onChangeText={(text) => handleChange("password", text)}
           value={credentials.password}
         />
 
         <TouchableOpacity onPress={() => promptAsync()} style={styles.button}>
-          <Text style={styles.buttonText}>Login with Spotify</Text>
+          <View style={styles.buttonContent}>
+            <Image
+              source={require("../../assets/images/spotifylogo.png")}
+              style={styles.logo}
+            />
+            <Text style={styles.buttonText}>Login with Spotify</Text>
+          </View>
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Text> Create Account </Text>
-        </TouchableOpacity>
+        <View style={{ alignItems: "center", marginTop: 16 }}>
+          <Text> Don't have an account? </Text>
+          <TouchableOpacity onPress={() => router.push("/personalInfo")}>
+            <Text style={styles.linkText}> Sign up now! </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -242,54 +227,75 @@ export default function Login() {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1, // Ensures SafeAreaView takes full height
-    justifyContent: "center", // Centers content vertically
-    alignItems: "center", // Centers content horizontally
-    backgroundColor: "#f9f9f9",
+    flex: 1,
+    alignItems: "center",
+    backgroundColor: "#faf8f6",
     width: "100%",
+    justifyContent: "center",
+  },
+  linkText: {
+    color: "#1e90ff", // Blue color for the link
+    fontWeight: "bold",
+    marginTop: 5,
   },
   container: {
-    width: "100%", // Full width container
-    justifyContent: "center", // Center items vertically
-    alignItems: "center", // Center items horizontally
-    padding: 16,
-    backgroundColor: "white",
-    borderRadius: 8,
+    width: "90%",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 30,
+    borderRadius: 16, // Rounded corners
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 8,
+    elevation: 6,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#ff5a79", // A fun, romantic color for the labels
     marginBottom: 8,
   },
   input: {
-    height: 40,
-    width: "80%", // Input takes 80% of available width
-    borderColor: "#ccc",
+    height: 48,
+    width: "85%",
+    borderColor: "#ff5a79",
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 20,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    marginBottom: 24,
+    fontSize: 16,
+    color: "#333",
   },
   button: {
-    backgroundColor: "#1e90ff",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    backgroundColor: "#000",
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 10,
+    marginTop: 16,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
+    fontSize: 16,
     textAlign: "center",
   },
-  link: {
-    color: "#1e90ff",
+
+  logo: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+  },
+  title: {
+    fontSize: 50, // Large font size for the title
+    fontWeight: "bold", // Bold text
+    color: "#ffb6c1", // Custom color for a unique look
     textAlign: "center",
-    fontSize: 16,
-    marginTop: 16,
+    marginBottom: 80,
   },
 });
