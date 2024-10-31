@@ -9,8 +9,8 @@ export default function RootLayout() {
       <Stack.Screen name="personalInfo" options={{ headerShown: false }} />
       <Stack.Screen name="password" options={{ headerShown: false }} />
 
-      <Stack.Screen name="gender" />
-      <Stack.Screen name="orientation" />
+      <Stack.Screen name="gender" options={{ headerShown: false }} />
+      <Stack.Screen name="orientation" options={{ headerShown: false }} />
     </Stack>
   );
 }

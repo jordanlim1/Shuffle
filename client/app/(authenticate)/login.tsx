@@ -121,7 +121,11 @@ export default function Login() {
     const response = await body.json();
 
     if (response.access_token) {
+      const timestamp = new Date().getTime(); // Current time in milliseconds
+
       await AsyncStorage.setItem("access_token", response.access_token);
+      await AsyncStorage.setItem("token_timestamp", JSON.stringify(timestamp)); // Save timestamp
+
       getProfile(response.access_token);
     } else {
       throw new Error("Failed to retrieve access token");
@@ -185,13 +189,13 @@ export default function Login() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View>
-        {" "}
         <Text style={styles.title}>Shuffle</Text>
       </View>
       <View style={styles.container}>
         <TextInput
           style={styles.input}
           placeholder="Email"
+          placeholderTextColor={"#333"}
           onChangeText={(text) => handleChange("email", text)}
           value={credentials.email}
         />
@@ -199,6 +203,7 @@ export default function Login() {
         <TextInput
           style={styles.input}
           placeholder="Password"
+          placeholderTextColor={"#333"}
           secureTextEntry={true}
           onChangeText={(text) => handleChange("password", text)}
           value={credentials.password}

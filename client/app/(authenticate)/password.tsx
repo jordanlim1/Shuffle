@@ -82,6 +82,7 @@ const Password = () => {
                 saveRegistrationInfo("password", text);
               }}
               placeholder="New Password"
+              placeholderTextColor={"#D3D3D3"}
             />
           </View>
           <View style={styles.inputContainer}>
@@ -97,22 +98,25 @@ const Password = () => {
               secureTextEntry={true}
               onChangeText={setConfirmPassword}
               placeholder="Confirm Password"
+              placeholderTextColor={"#D3D3D3"}
             />
           </View>
         </View>
-        <TouchableOpacity
-          style={[styles.floatingButton, styles.leftButton]}
-          onPress={() => router.push("/personalInfo")}
-        >
-          <AntDesign name="arrowleft" size={24} color="white" />
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.floatingButton}
+            onPress={() => router.push("/personalInfo")}
+          >
+            <AntDesign name="arrowleft" size={30} color="white" />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.floatingButton, styles.rightButton]}
-          onPress={() => router.push("/location")}
-        >
-          <AntDesign name="arrowright" size={24} color="white" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.floatingButton}
+            onPress={() => router.push("/gender")}
+          >
+            <AntDesign name="arrowright" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -127,11 +131,10 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     position: "absolute",
-    paddingHorizontal: 20,
     alignItems: "flex-start",
     width: "100%",
-    top: 20,
-    marginLeft: 10,
+    top: 50,
+    paddingHorizontal: 10,
   },
   container: {
     flex: 1,
@@ -142,9 +145,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#333",
+    marginBottom: -30,
   },
   inputSection: {
     width: "100%",
@@ -177,11 +181,10 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   floatingButton: {
-    position: "absolute",
     backgroundColor: "#ff5a79",
-    borderRadius: 30,
-    width: 50,
-    height: 50,
+    borderRadius: 35,
+    width: 70,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -190,20 +193,21 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-  leftButton: {
+  buttonContainer: {
+    position: "absolute",
+    display: "flex",
+    width: "100%",
+    justifyContent: "space-between",
     bottom: 20,
-    left: 20,
+    flexDirection: "row",
   },
-  rightButton: {
-    bottom: 20,
-    right: 20,
-  },
+
   dotContainer: {
     display: "flex",
     flexDirection: "row",
   },
   dot: {
-    fontSize: 40,
+    fontSize: 60,
     color: "#333",
     marginHorizontal: 2,
   },

@@ -38,6 +38,10 @@ const personalInfo = () => {
   const [birthdayPlaceholder, setBirthdayPlaceholder] = useState(
     "Enter your birthday"
   );
+  const [locationError, setLocationError] = useState("");
+  const [location, setLocation] = useState("Press here to grab your location");
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState(0);
 
   const dotScales = useRef([
     new Animated.Value(1),
@@ -76,23 +80,16 @@ const personalInfo = () => {
   }, []);
 
   async function prefill() {
-    const name = await getResgistrationInfo("name");
-    const email = await getResgistrationInfo("email");
-    setName(name);
-    setEmail(email);
+    const storedName = await getResgistrationInfo("name");
+    const storedEmail = await getResgistrationInfo("email");
+    const storedDate = await getResgistrationInfo("formattedDate");
+    const storedLocation = await getResgistrationInfo("formattedLocation");
+
+    if (storedName) setName(storedName);
+    if (storedEmail) setEmail(storedEmail);
+    if (storedDate) setBirthdayPlaceholder(storedDate);
+    if (storedLocation) setLocation(storedLocation);
   }
-
-  const [locationError, setLocationError] = useState("");
-  const [location, setLocation] = useState({
-    city: "",
-    district: "",
-    region: "",
-    postalCode: "",
-    isoCountryCode: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState(0);
 
   const saveRegistrationInfoDebounced = debounce(
     (screenName: string, value: number) => {
@@ -122,16 +119,14 @@ const personalInfo = () => {
 
       console.log(address);
       const { city, district, region, postalCode, isoCountryCode } = address[0];
+      const formattedLocation = `${district} ${city}, ${region} ${postalCode} ${isoCountryCode}`;
 
-      setLocation({
-        city: city as string,
-        district: district as string,
-        region: region as string,
-        postalCode: postalCode as string,
-        isoCountryCode: isoCountryCode as string,
+      setLocation(formattedLocation);
+      saveRegistrationInfo("location", {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
       });
-
-      saveRegistrationInfo("location", location);
+      saveRegistrationInfo("formattedLocation", formattedLocation);
     } catch (err) {
       console.log("Error requesting location: ", err);
       setLocationError("Failed to retrieve location.");
@@ -149,6 +144,7 @@ const personalInfo = () => {
     setDate(currentDate);
 
     const formattedDate = dayjs(currentDate).format("YYYY-MM-DD");
+    saveRegistrationInfo("formattedDate", formattedDate);
     setBirthdayPlaceholder(formattedDate);
 
     const currentYear = dayjs().year();
@@ -157,6 +153,30 @@ const personalInfo = () => {
     setAge(calculatedAge);
     saveRegistrationInfo("age", age);
   };
+
+  async function getStoredAccessToken() {
+    const token = await AsyncStorage.getItem("access_token");
+    const timestamp = await AsyncStorage.getItem("token_timestamp");
+
+    if (token && timestamp) {
+      const tokenAge = new Date().getTime() - JSON.parse(timestamp);
+      const expiryTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+      if (tokenAge < expiryTime) {
+        return token; // Token is still valid
+      } else {
+        // Token expired
+        await AsyncStorage.removeItem("access_token");
+        await AsyncStorage.removeItem("token_timestamp");
+        console.log("Access token has expired. Please re-authenticate.");
+        return null; // Token expired, return null to indicate this
+      }
+    } else {
+      console.log("No token found. Please authenticate.");
+      return null;
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -189,6 +209,7 @@ const personalInfo = () => {
                 saveRegistrationInfo("name", text);
               }}
               placeholder="Enter your name"
+              placeholderTextColor={"#333"}
               style={styles.textInput}
             />
           </View>
@@ -207,22 +228,25 @@ const personalInfo = () => {
                 saveRegistrationInfo("email", text);
               }}
               placeholder="Enter your email"
+              placeholderTextColor={"#333"}
               style={styles.textInput}
             />
           </View>
 
           <View style={styles.inputContainer}>
             <Fontisto name="date" size={24} color="black" style={styles.icon} />
-            <TextInput
-              placeholder={birthdayPlaceholder}
-              style={styles.textInput}
-              onFocus={() => setShow(true)}
-              editable={false}
-            />
+            <TouchableOpacity
+              onPress={() => setShow(true)}
+              style={styles.dateInput}
+            >
+              <Text style={styles.dateText}>{birthdayPlaceholder}</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.locationContainer}>
+          <Ionicons name="location-outline" size={24} color="black" />
+
           {locationError ? (
             <View>
               <Text style={styles.locationError}>{locationError}</Text>
@@ -231,23 +255,27 @@ const personalInfo = () => {
               </TouchableOpacity>
             </View>
           ) : loading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
-          ) : location.city ? (
-            <Text>
-              {`${location.district} ${location.city}, ${location.region} ${location.postalCode} ${location.isoCountryCode}`}
-            </Text>
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color="#5A5A5A" />
+            </View>
           ) : (
             <TouchableOpacity
               onPress={getLocation}
               style={styles.locationTouchable}
             >
               <View style={styles.locationContent}>
-                <Ionicons name="location-outline" size={24} color="black" />
-                <Text style={styles.locationText}>
-                  Press here to grab your location
-                </Text>
+                <Text style={styles.locationText}>{location}</Text>
               </View>
             </TouchableOpacity>
+
+            // <TouchableOpacity
+            //   onPress={getLocation}
+            //   style={styles.locationTouchable}
+            // >
+            //   <View style={styles.locationContent}>
+            //     <Text style={styles.locationText}>{locationPlaceholder}</Text>
+            //   </View>
+            // </TouchableOpacity>
           )}
         </View>
 
@@ -274,11 +302,11 @@ const personalInfo = () => {
         <TouchableOpacity
           style={styles.floatingButton}
           onPress={async () => {
-            const verified = await AsyncStorage.getItem("access_token");
-            router.push(verified !== null ? "/gender" : "/password");
+            const verified = await getStoredAccessToken();
+            router.push(verified ? "/gender" : "/password");
           }}
         >
-          <AntDesign name="arrowright" size={24} color="white" />
+          <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -296,6 +324,7 @@ const personalInfo = () => {
                 mode="date"
                 display="spinner"
                 onChange={onChange}
+                textColor="#333"
               />
               <TouchableOpacity
                 style={styles.closeButton}
@@ -327,16 +356,16 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     position: "absolute",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     alignItems: "flex-start",
     width: "100%",
-    top: 20,
-    marginLeft: 10,
+    top: 50,
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "bold",
     color: "#333",
+    marginBottom: -30,
   },
   inputSection: {
     width: "100%",
@@ -367,6 +396,11 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: "#333",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   locationContainer: {
     flexDirection: "row",
@@ -429,9 +463,9 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     backgroundColor: "#ff5a79",
-    borderRadius: 30,
-    width: 50,
-    height: 50,
+    borderRadius: 35,
+    width: 70,
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -444,6 +478,13 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
+  },
+  dateInput: {
+    flex: 1,
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#333",
   },
   modalContainer: {
     flex: 1,
@@ -479,7 +520,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   dot: {
-    fontSize: 40,
+    fontSize: 60,
     color: "#333",
     marginHorizontal: 2,
   },
