@@ -221,7 +221,7 @@ export default function Login() {
 
         <View style={{ alignItems: "center", marginTop: 16 }}>
           <Text> Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/personalInfo")}>
+          <TouchableOpacity onPress={() => router.push("/about")}>
             <Text style={styles.linkText}> Sign up now! </Text>
           </TouchableOpacity>
         </View>

@@ -8,14 +8,15 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { saveRegistrationInfo } from "../registrationUtils";
+import { getResgistrationInfo, saveRegistrationInfo } from "../registrationUtils";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 const Gender = () => {
-  const [gender, setGender] = useState("");
+  const [gender, setGender] = useState("")
+
   const dotScales = useRef([
     new Animated.Value(1),
     new Animated.Value(1),
@@ -87,14 +88,22 @@ const Gender = () => {
 
   function handlePress(genderValue: string) {
     setGender(genderValue);
-    saveRegistrationInfo("gender", genderValue);
   }
 
+  async function handleNext(){
+    if(!gender) {
+      alert("Please select an option.")
+      return
+    }
+
+    await saveRegistrationInfo("gender", gender);
+    router.push("/preference")
+  }
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Choose Your Gender </Text>
+          <Text style={styles.title}> Gender </Text>
           <View style={styles.dotContainer}>
             {dotScales.map((scale, index) => (
               <Animated.Text
@@ -121,24 +130,12 @@ const Gender = () => {
             </TouchableOpacity>
           ))}
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={async () => {
-              router.push("/password");
-            }}
-          >
-            <AntDesign name="arrowleft" size={30} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={async () => {
-              router.push("/orientation");
-            }}
-          >
-            <AntDesign name="arrowright" size={30} color="white" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={handleNext}
+        >
+          <AntDesign name="arrowright" size={30} color="white" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -195,8 +192,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   selected: {
-    backgroundColor: "#ff5a79",
-    borderColor: "#d3d3d3",
+    backgroundColor: "#fde",
+    borderColor: "#ffb6c1",
     borderWidth: 2,
   },
   genderText: {
@@ -206,8 +203,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   floatingButton: {
-    // position: "absolute",
-    // bottom: 20,
+    position: "absolute",
+    bottom: 30,
+    right: 40,
     backgroundColor: "#ff5a79",
     borderRadius: 35,
     width: 70,
@@ -220,7 +218,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
-
   buttonContainer: {
     position: "absolute",
     display: "flex",

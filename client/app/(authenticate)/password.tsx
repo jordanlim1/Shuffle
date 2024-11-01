@@ -14,14 +14,16 @@ import { saveRegistrationInfo } from "../registrationUtils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { set } from "lodash";
+import Feather from '@expo/vector-icons/Feather';
 
 const Password = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordMessage, setPasswordMessage] = useState(
-    "Must contain a capital letter, a special character, a number, and be at least 8 characters."
-  );
-  const [error, setError] = useState(false);
+  const [errorMessage, seterrorMessage] = useState(
+""  );
+  const [show, setShow] = useState(false)
+  const [confirmShow, setConfirmShow] = useState(false)
+
   const dotScales = useRef([
     new Animated.Value(1),
     new Animated.Value(1),
@@ -30,9 +32,6 @@ const Password = () => {
 
   useEffect(() => {
     validatePassword(password);
-    if (confirmPassword && password !== confirmPassword) {
-      setError(true);
-    } else setError(false);
   }, [password, confirmPassword]);
 
   useEffect(() => {
@@ -62,36 +61,43 @@ const Password = () => {
   }, [dotScales]);
 
   function handleNext() {
-    if (error || !confirmPassword || !password) return -1;
+    if (confirmPassword && password !== confirmPassword || !confirmPassword || !password) {
+      alert("Please fill out all fields.")
+      return -1;
+    }
     saveRegistrationInfo("password", password);
     router.push("/gender");
   }
 
   const validatePassword = (text: string) => {
-    setError(true);
+
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
     const uppercaseRegex = /[A-Z]/;
     let message = "";
 
-    if (text.length < 8) message = "Password must be at least 8 characters.";
+    if(password === "") {
+      message =     "Must contain a capital letter, a special character, a number, and be at least 8 characters."
+
+    }
+    else {
+    if (text.length < 8 && password !== "") message = "Password must be at least 8 characters.";
     else if (!specialCharRegex.test(text))
       message = "Password must include a special character.";
     else if (!uppercaseRegex.test(text))
       message = "Password must include an uppercase letter.";
     else message = ""; // No validation errors
+}
 
-    setPasswordMessage(message);
+    seterrorMessage(message);
 
-    if (!message) {
-      setError(false);
-      return true;
-    }
+    if (!message) return true;
+
   };
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Set Your Password</Text>
+          <Text style={styles.title}>Password</Text>
           <View style={styles.dotContainer}>
             {dotScales.map((scale, index) => (
               <Animated.Text
@@ -114,14 +120,17 @@ const Password = () => {
             <TextInput
               style={styles.textInput}
               textContentType="password"
-              secureTextEntry={true}
+              secureTextEntry={!show}
               onChangeText={(text) => setPassword(text)}
               placeholder="New Password"
               placeholderTextColor={"#D3D3D3"}
             />
-            {!password && <Text style={styles.errorText}>*</Text>}
+            <TouchableOpacity onPress={() => setShow(!show)}>
+            <Feather name={show ? "eye" : "eye-off"} size={24} color="black" />
+               </TouchableOpacity>
           </View>
-          <Text style={styles.validationMessage}>{passwordMessage}</Text>
+          
+          <Text style={styles.validationMessage}>{errorMessage}</Text>
           <View style={styles.inputContainer}>
             <Ionicons
               name="lock-closed-outline"
@@ -132,34 +141,28 @@ const Password = () => {
             <TextInput
               style={styles.textInput}
               textContentType="password"
-              secureTextEntry={true}
+              secureTextEntry={!confirmShow}
               onChangeText={setConfirmPassword}
               placeholder="Confirm Password"
               placeholderTextColor={"#D3D3D3"}
             />
-            {!confirmPassword && <Text style={styles.errorText}>*</Text>}
+            <TouchableOpacity onPress={() => setConfirmShow(!confirmShow)}>
+            <Feather name={confirmShow ? "eye" : "eye-off"} size={24} color="black" />
+               </TouchableOpacity>
           </View>
-          {error && (
+          {confirmPassword && password !== confirmPassword && (
             <Text style={styles.validationMessage}>
               Passwords do not match.
             </Text>
           )}
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.floatingButton}
-            onPress={() => {
-              router.push("/personalInfo");
-            }}
-          >
-            <AntDesign name="arrowleft" size={30} color="white" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
-            <AntDesign name="arrowright" size={30} color="white" />
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={handleNext}
+        >
+          <AntDesign name="arrowright" size={30} color="white" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -224,6 +227,9 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   floatingButton: {
+    position: "absolute",
+    bottom: 30,
+    right: 40,
     backgroundColor: "#ff5a79",
     borderRadius: 35,
     width: 70,
@@ -235,14 +241,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 6,
     elevation: 5,
-  },
-  buttonContainer: {
-    position: "absolute",
-    display: "flex",
-    width: "100%",
-    justifyContent: "space-between",
-    bottom: 20,
-    flexDirection: "row",
   },
   validationMessage: {
     color: "red",
