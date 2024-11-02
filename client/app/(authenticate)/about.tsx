@@ -48,17 +48,17 @@ const personalInfo = () => {
     age: false,
     height: false,
   });
-  const [showHeight, setShowHeight] = useState(false)
+  const [showHeight, setShowHeight] = useState(false);
 
   const [showHeightPicker, setShowHeightPicker] = useState(false);
   const [height, setHeight] = useState<{
-    feet: Number
-    inches: Number;
+    feet: Number | null;
+    inches: Number | null;
   }>({
-    feet: 3,
-    inches: 0,
+    feet: null,
+    inches: null,
   });
-  
+
   //if user signed in w/ spotify oauth, this fields should be prepopulated
   useEffect(() => {
     {
@@ -72,29 +72,25 @@ const personalInfo = () => {
     }
   }, []);
 
-  
-
   const handleNextPress = async () => {
     const errors = {
       name: !name,
       email: !email,
       age: birthdayPlaceholder === "Enter your birthday",
-      height: height.feet === null || height.inches === null
+      height: height.feet === null || height.inches === null,
     };
 
     setValidationErrors(errors);
 
-    
-
     // Only proceed if all fields are filled
     if (!Object.values(errors).includes(true)) {
-      if(!email.includes("@")) {
-        alert("Invalid email format.")
-        return
+      if (!email.includes("@")) {
+        alert("Invalid email format.");
+        return;
       }
       const verified = await getStoredAccessToken();
-      saveRegistrationInfo("name", name)
-      saveRegistrationInfo("email", email)
+      saveRegistrationInfo("name", name);
+      saveRegistrationInfo("email", email);
       router.push(verified ? "/location" : "/password");
     }
   };
@@ -209,10 +205,13 @@ const personalInfo = () => {
             style={styles.icon}
           />
           <TouchableOpacity
-            onPress={() => setShowHeightPicker(true)}
+            onPress={() => {
+              setShowHeightPicker(true);
+              if(!height.feet && !height.inches) setHeight({feet: 3, inches: 0})
+            }}
             style={styles.dateInput}>
             <Text style={styles.dateText}>
-              {showHeight 
+              {showHeight
                 ? `${height.feet} ft ${height.inches} in`
                 : "Enter your height"}
             </Text>
@@ -242,7 +241,6 @@ const personalInfo = () => {
                 onChange={onChange}
                 textColor="#333"
                 maximumDate={new Date()} // This disables future dates
-
               />
               <TouchableOpacity
                 style={styles.closeButton}
@@ -310,7 +308,7 @@ const personalInfo = () => {
                 style={styles.closeButton}
                 onPress={() => {
                   saveRegistrationInfo("height", height);
-                  setShowHeight(true)
+                  setShowHeight(true);
                   setShowHeightPicker(false);
                 }}>
                 <Text style={styles.closeButtonText}>Close</Text>
