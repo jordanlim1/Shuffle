@@ -1,116 +1,94 @@
-import { Animated, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getResgistrationInfo, saveRegistrationInfo } from "../registrationUtils";
+import {
+  getResgistrationInfo,
+  saveRegistrationInfo,
+} from "../registrationUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Dots from "../components/Dots";
+import NextButton from "../components/NextButton";
 
 const Preference = () => {
   const [preferences, setPreferences] = useState("");
-  
-  const dotScales = useRef([
-    new Animated.Value(1),
-    new Animated.Value(1),
-    new Animated.Value(1),
-  ]).current;
 
-  useEffect(() => {
-    const animateDots = () => {
-      // Create an array of animations for each dot
-      const animations = dotScales.map((scale, index) =>
-        Animated.sequence([
-          Animated.timing(scale, {
-            toValue: 1.5,
-            duration: 500,
-            delay: index * 400, // Stagger each dot's animation
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ])
-      );
-
-      // Start all animations in parallel and loop
-      Animated.loop(Animated.parallel(animations)).start();
-    };
-
-    animateDots();
-  }, [dotScales]);
   const options = [
-    { value: "Men", icon: <Ionicons name="man-outline" size={36} color="black" /> },
-    { value: "Women", icon: <Ionicons name="woman-outline" size={36} color="black" /> },
-    { value: "Both", icon: (
-      <View style={styles.bothIcons}>
-        <Ionicons name="woman-outline" size={36} color="black" />
-        <Ionicons name="man-outline" size={36} color="black" />
-      </View>
-    )},
-    { value: "Transgender", icon: <MaterialIcons name="transgender" size={36} color="black" /> },
-    { value: "All Genders", icon: <Ionicons name="people-outline" size={36} color="black" /> },
-    { value: "Non-binary", icon: <MaterialCommunityIcons name="gender-non-binary" size={36} color="black" /> },
-
+    {
+      value: "Men",
+      icon: <Ionicons name="man-outline" size={36} color="black" />,
+    },
+    {
+      value: "Women",
+      icon: <Ionicons name="woman-outline" size={36} color="black" />,
+    },
+    {
+      value: "Both",
+      icon: (
+        <View style={styles.bothIcons}>
+          <Ionicons name="woman-outline" size={36} color="black" />
+          <Ionicons name="man-outline" size={36} color="black" />
+        </View>
+      ),
+    },
+    {
+      value: "Transgender",
+      icon: <MaterialIcons name="transgender" size={36} color="black" />,
+    },
+    {
+      value: "All Genders",
+      icon: <Ionicons name="people-outline" size={36} color="black" />,
+    },
+    {
+      value: "Non-binary",
+      icon: (
+        <MaterialCommunityIcons
+          name="gender-non-binary"
+          size={36}
+          color="black"
+        />
+      ),
+    },
   ];
-  
 
   function handlePress(preference: string) {
     setPreferences(preference);
   }
 
-  async function handleNext(){
-    if(!preferences) {
-      
-      alert("Please select a preference.")
-      return}
-
-    await saveRegistrationInfo("preference", preferences)
-    router.push("/images")
-  }
+ 
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}> 
-      <View style={styles.titleContainer}> 
-      <Text style={styles.title}>Preference</Text>
-      <View style={styles.dotContainer}>
-            {dotScales.map((scale, index) => (
-              <Animated.Text
-                key={index}
-                style={[styles.dot, { transform: [{ scale }] }]}
-              >
-                .
-              </Animated.Text>
-            ))}
-          </View>
-      </View>
-      <View style={styles.gridContainer}>
-        {options.map((option, idx) => (
-          <TouchableOpacity
-            key={idx}
-            style={[
-              styles.optionButton,
-              option.value === preferences ? styles.selected : null,
-            ]}
-            onPress={() => handlePress(option.value)}
-          >
-            {option.icon}
-            <Text style={styles.optionText}>{option.value}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <View style={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Preference</Text>
+          <Dots />
+        </View>
+        <View style={styles.gridContainer}>
+          {options.map((option, idx) => (
+            <TouchableOpacity
+              key={idx}
+              style={[
+                styles.optionButton,
+                option.value === preferences ? styles.selected : null,
+              ]}
+              onPress={() => handlePress(option.value)}>
+              {option.icon}
+              <Text style={styles.optionText}>{option.value}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={handleNext}
-        >
-          <AntDesign name="arrowright" size={30} color="white" />
-        </TouchableOpacity>
-      
+          <NextButton state={preferences} route="orientation" screenName="preference"/>
       </View>
     </SafeAreaView>
   );
@@ -129,7 +107,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignItems: "flex-start",
     width: "100%",
-    top: 50,
+    top: 40,
     paddingHorizontal: 10,
   },
   container: {
@@ -141,18 +119,17 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "bold",
     color: "#333",
     marginBottom: -30,
   },
- 
+
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
     width: "100%",
-  
   },
   optionButton: {
     alignItems: "center",
@@ -199,14 +176,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 6,
     elevation: 5,
-  },
-  dotContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  dot: {
-    fontSize: 60,
-    color: "#333",
-    marginHorizontal: 2,
   },
 });

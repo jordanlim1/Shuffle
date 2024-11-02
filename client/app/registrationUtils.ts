@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 export const saveRegistrationInfo = async <T>(screenName: string, data: T) => {
   try {
     const key = `registration_progress_${screenName}`;
@@ -19,3 +20,5 @@ export const getResgistrationInfo = async (screenName: string) => {
     console.log("Error", err);
   }
 };
+
+

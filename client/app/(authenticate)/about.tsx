@@ -29,127 +29,69 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Slider from "@react-native-community/slider";
 import { debounce } from "lodash";
 import * as Location from "expo-location";
+import Dots from "../components/Dots";
+import NextButton from "../components/NextButton";
+import { Picker } from "@react-native-picker/picker";
 
 const personalInfo = () => {
   const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [age, setAge] = useState<number | undefined>(undefined);
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [birthdayPlaceholder, setBirthdayPlaceholder] = useState(
     "Enter your birthday"
   );
-  const [locationError, setLocationError] = useState("");
-  const [location, setLocation] = useState("Press here to grab your location");
-  const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState(50);
   const [validationErrors, setValidationErrors] = useState({
     name: false,
     email: false,
     age: false,
-    location: false,
+    height: false,
   });
 
-  const dotScales = useRef([
-    new Animated.Value(1),
-    new Animated.Value(1),
-    new Animated.Value(1),
-  ]).current;
-
-  useEffect(() => {
-    const animateDots = () => {
-      // Create an array of animations for each dot
-      const animations = dotScales.map((scale, index) =>
-        Animated.sequence([
-          Animated.timing(scale, {
-            toValue: 1.5,
-            duration: 500,
-            delay: index * 400, // Stagger each dot's animation
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ])
-      );
-
-      // Start all animations in parallel and loop
-      Animated.loop(Animated.parallel(animations)).start();
-    };
-
-    animateDots();
-  }, [dotScales]);
+  const [showHeightPicker, setShowHeightPicker] = useState(false);
+  const [height, setHeight] = useState<{
+    feet: number | null;
+    inches: number | null;
+  }>({
+    feet: null,
+    inches: null,
+  });
   //if user signed in w/ spotify oauth, this fields should be prepopulated
   useEffect(() => {
-    {async () => {
-      const storedName = await getResgistrationInfo("name");
-      const storedEmail = await getResgistrationInfo("email");
-  
-      if (storedName) setName(storedName);
-      if (storedEmail) setEmail(storedEmail);
-    }}
-  }, []);
+    {
+      async () => {
+        const storedName = await getResgistrationInfo("name");
+        const storedEmail = await getResgistrationInfo("email");
 
-
-  const saveRegistrationInfoDebounced = debounce(
-    (screenName: string, value: number) => {
-      saveRegistrationInfo(screenName, value);
-    },
-    300
-  );
-
-  const getLocation = async () => {
-    try {
-      setLoading(true);
-      const { status } = await Location.requestForegroundPermissionsAsync();
-
-      if (status !== "granted") {
-        setLocationError(
-          "Location permissions denied, please update settings."
-        );
-        setLoading(false);
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync();
-      let address = await Location.reverseGeocodeAsync({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-
-      const { city, district, region, postalCode, isoCountryCode } = address[0];
-      const formattedLocation = `${district} ${city}, ${region} ${postalCode} ${isoCountryCode}`;
-
-      setLocation(formattedLocation);
-      saveRegistrationInfo("location", {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
-      setValidationErrors((prev) => ({ ...prev, location: false }));
-    } catch (err) {
-      console.log("Error requesting location: ", err);
-      setLocationError("Failed to retrieve location.");
-    } finally {
-      setLoading(false);
+        if (storedName) setName(storedName);
+        if (storedEmail) setEmail(storedEmail);
+      };
     }
-  };
+  }, []);
 
   const handleNextPress = async () => {
     const errors = {
       name: !name,
       email: !email,
       age: birthdayPlaceholder === "Enter your birthday",
-      location: location === "Press here to grab your location",
+      height: height.feet === null || height.inches === null
     };
 
     setValidationErrors(errors);
 
+    
+
     // Only proceed if all fields are filled
     if (!Object.values(errors).includes(true)) {
+      if(!email.includes("@")) {
+        alert("Invalid email format.")
+        return
+      }
       const verified = await getStoredAccessToken();
-      router.push(verified ? "/gender" : "/password");
+      saveRegistrationInfo("name", name)
+      saveRegistrationInfo("email", email)
+      router.push(verified ? "/location" : "/password");
     }
   };
 
@@ -161,7 +103,7 @@ const personalInfo = () => {
     setDate(currentDate);
 
     const formattedDate = dayjs(currentDate).format("YYYY-MM-DD");
-  
+
     setBirthdayPlaceholder(formattedDate);
 
     const currentYear = dayjs().year();
@@ -177,7 +119,7 @@ const personalInfo = () => {
 
     if (token && timestamp) {
       const tokenAge = new Date().getTime() - JSON.parse(timestamp);
-      const expiryTime = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+      const expiryTime = 30 * 60 * 60 * 1000; // 30 hours in milliseconds
 
       if (tokenAge < expiryTime) {
         return token; // Token is still valid
@@ -199,23 +141,14 @@ const personalInfo = () => {
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>About</Text>
-          <View style={styles.dotContainer}>
-            {dotScales.map((scale, index) => (
-              <Animated.Text
-                key={index}
-                style={[styles.dot, { transform: [{ scale }] }]}
-              >
-                .
-              </Animated.Text>
-            ))}
-          </View>
+          <Dots />
         </View>
 
         <View style={styles.inputSection}>
           <View style={styles.inputContainer}>
             <Ionicons
               name="person-outline"
-              size={24}
+              size={30}
               color="black"
               style={styles.icon}
             />
@@ -224,9 +157,8 @@ const personalInfo = () => {
               onChangeText={(text) => {
                 setName(text);
                 setValidationErrors((prev) => ({ ...prev, name: false }));
-                saveRegistrationInfo("name", text);
               }}
-              placeholder="Enter your name"
+              placeholder="Enter your first name"
               placeholderTextColor={"#333"}
               style={styles.textInput}
             />
@@ -236,7 +168,7 @@ const personalInfo = () => {
           <View style={styles.inputContainer}>
             <Fontisto
               name="email"
-              size={24}
+              size={30}
               color="black"
               style={styles.icon}
             />
@@ -245,7 +177,6 @@ const personalInfo = () => {
               onChangeText={(text) => {
                 setEmail(text);
                 setValidationErrors((prev) => ({ ...prev, email: false }));
-                saveRegistrationInfo("email", text);
               }}
               placeholder="Enter your email"
               placeholderTextColor={"#333"}
@@ -255,73 +186,39 @@ const personalInfo = () => {
           </View>
 
           <View style={styles.inputContainer}>
-            <Fontisto name="date" size={24} color="black" style={styles.icon} />
+            <Fontisto name="date" size={30} color="black" style={styles.icon} />
 
             <TouchableOpacity
-              onPress={() => setShow(true)}
-              style={styles.dateInput}
-            >
+              onPress={() => setShowDatePicker(true)}
+              style={styles.dateInput}>
               <Text style={styles.dateText}>{birthdayPlaceholder}</Text>
             </TouchableOpacity>
             {validationErrors.age && <Text style={styles.errorText}>*</Text>}
           </View>
         </View>
 
-        <View style={styles.locationContainer}>
-          <Ionicons name="location-outline" size={24} color="black" />
-
-          {locationError ? (
-            <View>
-              <Text style={styles.locationError}>{locationError}</Text>
-              <TouchableOpacity onPress={getLocation}>
-                <Text>Try Again</Text>
-              </TouchableOpacity>
-            </View>
-          ) : loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#5A5A5A" />
-            </View>
-          ) : (
-            <TouchableOpacity
-              onPress={getLocation}
-              style={styles.locationTouchable}
-            >
-              <View style={styles.locationContent}>
-        <View style={styles.locationTextContainer}>
-          <Text style={styles.locationText}>{location}</Text>
-          {validationErrors.location && <Text style={styles.errorText}>*</Text>}
-        </View>
-      </View>
-            </TouchableOpacity>
-            
-          )}
-
-        </View>
-
-        <View style={styles.sliderContainer}>
-          <Slider
-            style={{ width: "100%" }}
-            minimumValue={0}
-            maximumValue={300}
-            minimumTrackTintColor="#d3d3d3"
-            maximumTrackTintColor="#000000"
-            thumbTintColor="#ff5a79"
-            value={value}
-            onValueChange={(newValue) => {
-              const roundedValue = Math.floor(newValue);
-              setValue(roundedValue);
-              saveRegistrationInfoDebounced("distance", roundedValue);
-            }}
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="resize-outline"
+            size={30}
+            color="black"
+            style={styles.icon}
           />
-          <Text style={styles.sliderLabel}>
-            Show me matches within: {value} miles
-          </Text>
+          <TouchableOpacity
+            onPress={() => setShowHeightPicker(true)}
+            style={styles.dateInput}>
+            <Text style={styles.dateText}>
+              {height.feet !== null && height.inches !== null
+                ? `${height.feet} ft ${height.inches} in`
+                : "Enter your height"}
+            </Text>
+          </TouchableOpacity>
+          {validationErrors.height && <Text style={styles.errorText}>*</Text>}
         </View>
 
         <TouchableOpacity
           style={styles.floatingButton}
-          onPress={handleNextPress}
-        >
+          onPress={handleNextPress}>
           <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
       </View>
@@ -329,10 +226,9 @@ const personalInfo = () => {
       <Modal
         transparent={true}
         animationType="slide"
-        visible={show}
-        onRequestClose={() => setShow(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setShow(false)}>
+        visible={showDatePicker}
+        onRequestClose={() => setShowDatePicker(false)}>
+        <TouchableWithoutFeedback onPress={() => setShowDatePicker(false)}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <DateTimePicker
@@ -341,14 +237,77 @@ const personalInfo = () => {
                 display="spinner"
                 onChange={onChange}
                 textColor="#333"
+                maximumDate={new Date()} // This disables future dates
+
               />
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => {
                   saveRegistrationInfo("age", age);
-                  setShow(false);
-                }}
-              >
+                  setShowDatePicker(false);
+                }}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={showHeightPicker}
+        onRequestClose={() => setShowHeightPicker(false)}>
+        <TouchableWithoutFeedback>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
+                  width: "100%",
+                }}>
+                <View style={styles.pickerContainer}>
+                  <Text style={styles.sliderLabel}>Feet</Text>
+                  <Picker
+                    selectedValue={height.feet}
+                    onValueChange={(value) =>
+                      setHeight((prev) => ({ ...prev, feet: value }))
+                    }
+                    style={styles.picker}>
+                    {[...Array(5)].map((_, i) => (
+                      <Picker.Item
+                        key={i + 3}
+                        label={`${i + 3}`}
+                        value={i + 3}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+
+                {/* Inches Picker */}
+                <View style={styles.pickerContainer}>
+                  <Text style={styles.sliderLabel}>Inches</Text>
+                  <Picker
+                    selectedValue={height.inches}
+                    onValueChange={(value) =>
+                      setHeight((prev) => ({ ...prev, inches: value }))
+                    }
+                    style={styles.picker}>
+                    {[...Array(12)].map((_, i) => (
+                      <Picker.Item key={i} label={`${i}`} value={i} />
+                    ))}
+                  </Picker>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  saveRegistrationInfo("height", height);
+                  setShowHeightPicker(false);
+                }}>
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
             </View>
@@ -378,10 +337,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: "flex-start",
     width: "100%",
-    top: 50,
+    top: 40,
   },
   title: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "bold",
     color: "#333",
     marginBottom: -30,
@@ -399,9 +358,9 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    marginBottom: 30,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -413,7 +372,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 20,
     color: "#333",
   },
   loadingContainer: {
@@ -478,9 +437,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sliderLabel: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#333",
-    marginTop: 10,
+    marginBottom: 20,
+    fontWeight: "bold",
   },
   floatingButton: {
     position: "absolute",
@@ -508,7 +468,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dateText: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#333",
   },
   modalContainer: {
@@ -519,7 +479,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "white",
-    padding: 24,
+    padding: 30,
     borderRadius: 15,
     alignItems: "center",
     shadowColor: "#000",
@@ -527,6 +487,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 8,
     elevation: 5,
+    width: "90%",
+  },
+  pickerContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    marginVertical: 10,
+    marginBottom: 50,
+  },
+  picker: {
+    width: 100,
+    height: 150,
+    backgroundColor: "#f9f9f9",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   errorText: {
     color: "red",
@@ -544,14 +521,5 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
-  },
-  dotContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  dot: {
-    fontSize: 60,
-    color: "#333",
-    marginHorizontal: 2,
   },
 });

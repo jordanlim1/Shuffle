@@ -8,46 +8,18 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getResgistrationInfo, saveRegistrationInfo } from "../registrationUtils";
+import {
+  getResgistrationInfo,
+  saveRegistrationInfo,
+} from "../registrationUtils";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
+import Dots from "../components/Dots";
+import NextButton from "../components/NextButton";
 const Gender = () => {
-  const [gender, setGender] = useState("")
-
-  const dotScales = useRef([
-    new Animated.Value(1),
-    new Animated.Value(1),
-    new Animated.Value(1),
-  ]).current;
-
-  useEffect(() => {
-    const animateDots = () => {
-      // Create an array of animations for each dot
-      const animations = dotScales.map((scale, index) =>
-        Animated.sequence([
-          Animated.timing(scale, {
-            toValue: 1.5,
-            duration: 500,
-            delay: index * 400, // Stagger each dot's animation
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ])
-      );
-
-      // Start all animations in parallel and loop
-      Animated.loop(Animated.parallel(animations)).start();
-    };
-
-    animateDots();
-  }, [dotScales]);
+  const [gender, setGender] = useState("");
 
   const genders = [
     {
@@ -90,30 +62,13 @@ const Gender = () => {
     setGender(genderValue);
   }
 
-  async function handleNext(){
-    if(!gender) {
-      alert("Please select an option.")
-      return
-    }
-
-    await saveRegistrationInfo("gender", gender);
-    router.push("/preference")
-  }
+ 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}> Gender </Text>
-          <View style={styles.dotContainer}>
-            {dotScales.map((scale, index) => (
-              <Animated.Text
-                key={index}
-                style={[styles.dot, { transform: [{ scale }] }]}
-              >
-                .
-              </Animated.Text>
-            ))}
-          </View>
+          <Text style={styles.title}>Gender </Text>
+          <Dots />
         </View>
         <View style={styles.gridContainer}>
           {genders.map((genders, idx) => (
@@ -123,19 +78,13 @@ const Gender = () => {
                 styles.genderButton,
                 genders.value === gender ? styles.selected : null,
               ]}
-              onPress={() => handlePress(genders.value)}
-            >
+              onPress={() => handlePress(genders.value)}>
               {genders.icon}
               <Text style={styles.genderText}>{genders.value}</Text>
             </TouchableOpacity>
           ))}
         </View>
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={handleNext}
-        >
-          <AntDesign name="arrowright" size={30} color="white" />
-        </TouchableOpacity>
+      <NextButton state={gender} route={"preference"} screenName="gender"/>
       </View>
     </SafeAreaView>
   );
@@ -157,7 +106,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "bold",
     color: "#333",
     marginBottom: -30,
@@ -167,7 +116,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: "flex-start",
     width: "100%",
-    top: 50,
+    top: 40,
   },
   gridContainer: {
     flexDirection: "row",
@@ -225,15 +174,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     bottom: 20,
     flexDirection: "row",
-  },
-  dotContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  dot: {
-    fontSize: 70,
-    color: "#333",
-    marginHorizontal: 2,
   },
 });
 

@@ -14,106 +14,67 @@ import { saveRegistrationInfo } from "../registrationUtils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { set } from "lodash";
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@expo/vector-icons/Feather";
+import Dots from "../components/Dots";
 
 const Password = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errorMessage, seterrorMessage] = useState(
-""  );
-  const [show, setShow] = useState(false)
-  const [confirmShow, setConfirmShow] = useState(false)
-
-  const dotScales = useRef([
-    new Animated.Value(1),
-    new Animated.Value(1),
-    new Animated.Value(1),
-  ]).current;
+  const [errorMessage, seterrorMessage] = useState("");
+  const [show, setShow] = useState(false);
+  const [confirmShow, setConfirmShow] = useState(false);
 
   useEffect(() => {
     validatePassword(password);
   }, [password, confirmPassword]);
 
-  useEffect(() => {
-    const animateDots = () => {
-      // Create an array of animations for each dot
-      const animations = dotScales.map((scale, index) =>
-        Animated.sequence([
-          Animated.timing(scale, {
-            toValue: 1.5,
-            duration: 500,
-            delay: index * 400, // Stagger each dot's animation
-            useNativeDriver: true,
-          }),
-          Animated.timing(scale, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ])
-      );
-
-      // Start all animations in parallel and loop
-      Animated.loop(Animated.parallel(animations)).start();
-    };
-
-    animateDots();
-  }, [dotScales]);
-
   function handleNext() {
-    if (confirmPassword && password !== confirmPassword || !confirmPassword || !password) {
-      alert("Please fill out all fields.")
+    if (
+      (confirmPassword && password !== confirmPassword) ||
+      !confirmPassword ||
+      !password
+    ) {
+      alert("Please fill out all fields.");
       return -1;
     }
     saveRegistrationInfo("password", password);
-    router.push("/gender");
+    router.push("/location");
   }
 
   const validatePassword = (text: string) => {
-
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/;
     const uppercaseRegex = /[A-Z]/;
     let message = "";
 
-    if(password === "") {
-      message =     "Must contain a capital letter, a special character, a number, and be at least 8 characters."
-
+    if (password === "") {
+      message =
+        "Must contain a capital letter, a special character, a number, and be at least 8 characters.";
+    } else {
+      if (text.length < 8 && password !== "")
+        message = "Password must be at least 8 characters.";
+      else if (!specialCharRegex.test(text))
+        message = "Password must include a special character.";
+      else if (!uppercaseRegex.test(text))
+        message = "Password must include an uppercase letter.";
+      else message = ""; // No validation errors
     }
-    else {
-    if (text.length < 8 && password !== "") message = "Password must be at least 8 characters.";
-    else if (!specialCharRegex.test(text))
-      message = "Password must include a special character.";
-    else if (!uppercaseRegex.test(text))
-      message = "Password must include an uppercase letter.";
-    else message = ""; // No validation errors
-}
 
     seterrorMessage(message);
 
     if (!message) return true;
-
   };
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Password</Text>
-          <View style={styles.dotContainer}>
-            {dotScales.map((scale, index) => (
-              <Animated.Text
-                key={index}
-                style={[styles.dot, { transform: [{ scale }] }]}
-              >
-                .
-              </Animated.Text>
-            ))}
-          </View>
+          <Dots />
         </View>
         <View style={styles.inputSection}>
           <View style={styles.inputContainer}>
             <Ionicons
               name="lock-open-outline"
-              size={24}
+              size={30}
               color="black"
               style={styles.icon}
             />
@@ -126,15 +87,19 @@ const Password = () => {
               placeholderTextColor={"#D3D3D3"}
             />
             <TouchableOpacity onPress={() => setShow(!show)}>
-            <Feather name={show ? "eye" : "eye-off"} size={24} color="black" />
-               </TouchableOpacity>
+              <Feather
+                name={show ? "eye" : "eye-off"}
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
           </View>
-          
+
           <Text style={styles.validationMessage}>{errorMessage}</Text>
           <View style={styles.inputContainer}>
             <Ionicons
               name="lock-closed-outline"
-              size={24}
+              size={30}
               color="black"
               style={styles.icon}
             />
@@ -147,8 +112,12 @@ const Password = () => {
               placeholderTextColor={"#D3D3D3"}
             />
             <TouchableOpacity onPress={() => setConfirmShow(!confirmShow)}>
-            <Feather name={confirmShow ? "eye" : "eye-off"} size={24} color="black" />
-               </TouchableOpacity>
+              <Feather
+                name={confirmShow ? "eye" : "eye-off"}
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
           </View>
           {confirmPassword && password !== confirmPassword && (
             <Text style={styles.validationMessage}>
@@ -157,10 +126,7 @@ const Password = () => {
           )}
         </View>
 
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={handleNext}
-        >
+        <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
           <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
       </View>
@@ -191,7 +157,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: "bold",
     color: "#333",
     marginBottom: -30,
@@ -209,8 +175,8 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -223,7 +189,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 20,
     color: "#333",
   },
   floatingButton: {
@@ -247,15 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
   },
-  dotContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  dot: {
-    fontSize: 60,
-    color: "#333",
-    marginHorizontal: 2,
-  },
+
   errorText: {
     color: "red",
     fontSize: 18,
