@@ -115,7 +115,7 @@ const Images = () => {
   
       </View>
       <Pressable style={styles.finishButton} onPress={addImages}>
-        <Text style={styles.finishText}>Finish Profile</Text>
+        <Text style={styles.finishText}>Create Profile</Text>
       </Pressable>
     </SafeAreaView>
   );
