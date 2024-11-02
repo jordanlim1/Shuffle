@@ -32,7 +32,7 @@ import * as Location from "expo-location";
 import Dots from "../components/Dots";
 import NextButton from "../components/NextButton";
 import { Picker } from "@react-native-picker/picker";
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 const personalInfo = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);

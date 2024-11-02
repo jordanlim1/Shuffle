@@ -4,8 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getResgistrationInfo } from "../registrationUtils";
+import Dots from "../components/Dots";
+import Feather from '@expo/vector-icons/Feather';
 
-const images = () => {
+const Images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
 
   const pickImage = async (index: number) => {
@@ -32,8 +34,8 @@ const images = () => {
           const blob = await response.blob();
           formData.append("images", {
             uri: uri,
-            type: "image/jpeg", // Set correct MIME type
-            name: `photo-${Date.now()}.jpg`, // Unique filename
+            type: "image/jpeg",
+            name: `photo-${Date.now()}.jpg`,
           } as any);
         }
       }
@@ -45,6 +47,8 @@ const images = () => {
 
       const data = await res.json();
       console.log(data);
+
+      finishProfile()
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -53,7 +57,6 @@ const images = () => {
   function handleDelete(idx: number) {
     const updatedImages = [...images];
     updatedImages[idx] = "";
-
     setImages(updatedImages);
   }
 
@@ -66,17 +69,15 @@ const images = () => {
     const password = await getResgistrationInfo("password");
     const artists = await getResgistrationInfo("artists");
 
-    console.log(name, email, gender, age, orientation, artists);
-
     const body = {
-      name: name,
-      email: email,
-      password: password,
-      age: age,
-      gender: gender,
-      orientation: orientation,
-      artists: artists,
-      images: images,
+      name,
+      email,
+      password,
+      age,
+      gender,
+      orientation,
+      artists,
+      images,
     };
 
     const res = await fetch("http://192.168.1.35:3000/query/createProfile", {
@@ -87,45 +88,124 @@ const images = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {images.map((imageUri: string | null, idx: number) =>
-          imageUri !== "" ? (
-            <View key={idx}>
-              <Image source={{ uri: imageUri! }} style={styles.image} />
-              <Pressable onPress={() => handleDelete(idx!)}>
-                <Text>Delete</Text>
+      <View style={styles.titleContainer}>
+          <Text style={styles.title}>Images</Text>
+          <Dots />
+        </View>
+      <View style={styles.gridContainer}>
+        {images.map((imageUri: string | null, idx: number) => (
+          <View key={idx} style={styles.imageBox}>
+            {imageUri ? (
+              <View style={styles.imageWrapper}>
+                <Image source={{ uri: imageUri }} style={styles.image} />
+                <Pressable style={styles.deleteButton} onPress={() => handleDelete(idx)}>
+                  <Text style={styles.deleteText}><Feather name="x-circle" size={36} color="black" /></Text>
+                </Pressable>
+              </View>
+            ) : (
+              <Pressable style={styles.uploadBox} onPress={() => pickImage(idx)}>
+                <Text style={styles.uploadText}>Upload Image</Text>
               </Pressable>
-            </View>
-          ) : (
-            <Pressable key={idx} onPress={() => pickImage(idx)}>
-              <Text>Upload Image</Text>
-            </Pressable>
-          )
-        )}
-
-        <Button title="post" onPress={addImages} />
-        <Pressable onPress={finishProfile}>
-          <Text>Finish Profile</Text>
-        </Pressable>
+            )}
+          </View>
+        ))}
       </View>
+  
+      </View>
+      <Pressable style={styles.finishButton} onPress={addImages}>
+        <Text style={styles.finishText}>Finish Profile</Text>
+      </Pressable>
     </SafeAreaView>
   );
 };
 
-export default images;
+export default Images;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f9f9f9",
+  },
+  titleContainer: {
+    position: "absolute",
+    alignItems: "flex-start",
+    width: "100%",
+    top: 50,
+    paddingHorizontal: 10,
+  },
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#f9f9f9",
+    padding: 20,
+    justifyContent: "space-evenly",
+    width: "100%",
+    height: "100%"
+  },
+  title: {
+    fontSize: 40,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: -30,
+  },
+  
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-evenly",
+    alignItems:"center",
+    marginTop: 100,
+  },
+  imageBox: {
+    width: "45%",
+    aspectRatio: 1,
+    marginBottom: 15,
+  },
+  imageWrapper: {
+    position: "relative",
   },
   image: {
-    width: 200,
-    height: 200,
+    width: "100%",
+    height: "100%",
+    borderRadius: 8,
   },
-  button: {
-    backgroundColor: "black",
+  uploadBox: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ddd",
+    borderRadius: 8,
+  },
+  uploadText: {
+    color: "#333",
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    borderRadius: 9,
+    padding: 2,
+  },
+  deleteText: {
+    color: "white",
+    fontSize: 10,
+  },
+  finishButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: "#ff5a79",
+    bottom: 0,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  finishText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 30,
+    fontStyle:"italic",
   },
 });

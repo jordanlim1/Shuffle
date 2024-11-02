@@ -136,25 +136,27 @@ const LocationScreen = () => {
             </View>
           </View>
         )}
-        <View style={styles.sliderContainer}>
-          <Slider
-            style={{ width: "100%" }}
-            minimumValue={0}
-            maximumValue={200}
-            minimumTrackTintColor="#d3d3d3"
-            maximumTrackTintColor="#000000"
-            thumbTintColor="#ff5a79"
-            value={value}
-            onValueChange={(newValue) => {
-              const roundedValue = Math.floor(newValue);
-              setValue(roundedValue);
-              saveRegistrationInfoDebounced("distance", roundedValue);
-            }}
-          />
-          <Text style={styles.sliderLabel}>
-            Show me matches within: {value} miles
-          </Text>
-        </View>
+        {loading ? null : (
+          <View style={styles.sliderContainer}>
+            <Slider
+              style={{ width: "100%" }}
+              minimumValue={0}
+              maximumValue={200}
+              minimumTrackTintColor="#d3d3d3"
+              maximumTrackTintColor="#000000"
+              thumbTintColor="#ff5a79"
+              value={value}
+              onValueChange={(newValue) => {
+                const roundedValue = Math.floor(newValue);
+                setValue(roundedValue);
+                saveRegistrationInfoDebounced("distance", roundedValue);
+              }}
+            />
+            <Text style={styles.sliderLabel}>
+              Show me matches within: {value} miles
+            </Text>
+          </View>
+        )}
         <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
           <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
