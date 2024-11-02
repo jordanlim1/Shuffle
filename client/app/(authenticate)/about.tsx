@@ -48,15 +48,17 @@ const personalInfo = () => {
     age: false,
     height: false,
   });
+  const [showHeight, setShowHeight] = useState(false)
 
   const [showHeightPicker, setShowHeightPicker] = useState(false);
   const [height, setHeight] = useState<{
-    feet: number | null;
-    inches: number | null;
+    feet: Number
+    inches: Number;
   }>({
-    feet: null,
-    inches: null,
+    feet: 3,
+    inches: 0,
   });
+  
   //if user signed in w/ spotify oauth, this fields should be prepopulated
   useEffect(() => {
     {
@@ -69,6 +71,8 @@ const personalInfo = () => {
       };
     }
   }, []);
+
+  
 
   const handleNextPress = async () => {
     const errors = {
@@ -208,7 +212,7 @@ const personalInfo = () => {
             onPress={() => setShowHeightPicker(true)}
             style={styles.dateInput}>
             <Text style={styles.dateText}>
-              {height.feet !== null && height.inches !== null
+              {showHeight 
                 ? `${height.feet} ft ${height.inches} in`
                 : "Enter your height"}
             </Text>
@@ -306,6 +310,7 @@ const personalInfo = () => {
                 style={styles.closeButton}
                 onPress={() => {
                   saveRegistrationInfo("height", height);
+                  setShowHeight(true)
                   setShowHeightPicker(false);
                 }}>
                 <Text style={styles.closeButtonText}>Close</Text>
