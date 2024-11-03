@@ -11,6 +11,7 @@ import {
   Animated,
   ActivityIndicator,
   Alert,
+  Keyboard,
 } from "react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
@@ -138,199 +139,207 @@ const personalInfo = () => {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>About</Text>
-          <Dots />
-        </View>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>About</Text>
+            <Dots />
+          </View>
 
-        <View style={styles.inputSection}>
+          <View style={styles.inputSection}>
+            <View style={styles.inputContainer}>
+              <Ionicons
+                name="person-outline"
+                size={30}
+                color="black"
+                style={styles.icon}
+              />
+              <TextInput
+                value={name}
+                onChangeText={(text) => {
+                  setName(text);
+                  setValidationErrors((prev) => ({ ...prev, name: false }));
+                }}
+                placeholder="Enter your first name"
+                placeholderTextColor={"#333"}
+                style={styles.textInput}
+              />
+              {validationErrors.name && <Text style={styles.errorText}>*</Text>}
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Fontisto
+                name="email"
+                size={30}
+                color="black"
+                style={styles.icon}
+              />
+              <TextInput
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  setValidationErrors((prev) => ({ ...prev, email: false }));
+                }}
+                placeholder="Enter your email"
+                placeholderTextColor={"#333"}
+                style={styles.textInput}
+              />
+              {validationErrors.email && (
+                <Text style={styles.errorText}>*</Text>
+              )}
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Fontisto
+                name="date"
+                size={30}
+                color="black"
+                style={styles.icon}
+              />
+
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(true)}
+                style={styles.dateInput}
+              >
+                <Text style={styles.dateText}>{birthdayPlaceholder}</Text>
+              </TouchableOpacity>
+              {validationErrors.age && <Text style={styles.errorText}>*</Text>}
+            </View>
+          </View>
+
           <View style={styles.inputContainer}>
             <Ionicons
-              name="person-outline"
+              name="resize-outline"
               size={30}
               color="black"
               style={styles.icon}
             />
-            <TextInput
-              value={name}
-              onChangeText={(text) => {
-                setName(text);
-                setValidationErrors((prev) => ({ ...prev, name: false }));
-              }}
-              placeholder="Enter your first name"
-              placeholderTextColor={"#333"}
-              style={styles.textInput}
-            />
-            {validationErrors.name && <Text style={styles.errorText}>*</Text>}
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Fontisto
-              name="email"
-              size={30}
-              color="black"
-              style={styles.icon}
-            />
-            <TextInput
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setValidationErrors((prev) => ({ ...prev, email: false }));
-              }}
-              placeholder="Enter your email"
-              placeholderTextColor={"#333"}
-              style={styles.textInput}
-            />
-            {validationErrors.email && <Text style={styles.errorText}>*</Text>}
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Fontisto name="date" size={30} color="black" style={styles.icon} />
-
             <TouchableOpacity
-              onPress={() => setShowDatePicker(true)}
+              onPress={() => {
+                setShowHeightPicker(true);
+                if (!height.feet && !height.inches)
+                  setHeight({ feet: 3, inches: 0 });
+              }}
               style={styles.dateInput}
             >
-              <Text style={styles.dateText}>{birthdayPlaceholder}</Text>
+              <Text style={styles.dateText}>
+                {showHeight
+                  ? `${height.feet} ft ${height.inches} in`
+                  : "Enter your height"}
+              </Text>
             </TouchableOpacity>
-            {validationErrors.age && <Text style={styles.errorText}>*</Text>}
+            {validationErrors.height && <Text style={styles.errorText}>*</Text>}
           </View>
-        </View>
 
-        <View style={styles.inputContainer}>
-          <Ionicons
-            name="resize-outline"
-            size={30}
-            color="black"
-            style={styles.icon}
-          />
           <TouchableOpacity
-            onPress={() => {
-              setShowHeightPicker(true);
-              if (!height.feet && !height.inches)
-                setHeight({ feet: 3, inches: 0 });
-            }}
-            style={styles.dateInput}
+            style={styles.floatingButton}
+            onPress={handleNextPress}
           >
-            <Text style={styles.dateText}>
-              {showHeight
-                ? `${height.feet} ft ${height.inches} in`
-                : "Enter your height"}
-            </Text>
+            <AntDesign name="arrowright" size={30} color="white" />
           </TouchableOpacity>
-          {validationErrors.height && <Text style={styles.errorText}>*</Text>}
         </View>
 
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={handleNextPress}
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={showDatePicker}
+          onRequestClose={() => setShowDatePicker(false)}
         >
-          <AntDesign name="arrowright" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        transparent={true}
-        animationType="slide"
-        visible={showDatePicker}
-        onRequestClose={() => setShowDatePicker(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setShowDatePicker(false)}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <DateTimePicker
-                value={date}
-                mode="date"
-                display="spinner"
-                onChange={onChange}
-                textColor="#333"
-                maximumDate={new Date()} // This disables future dates
-              />
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => {
-                  saveRegistrationInfo("age", age);
-                  setShowDatePicker(false);
-                }}
-              >
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-
-      <Modal
-        transparent={true}
-        animationType="slide"
-        visible={showHeightPicker}
-        onRequestClose={() => setShowHeightPicker(false)}
-      >
-        <TouchableWithoutFeedback>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-evenly",
-                  width: "100%",
-                }}
-              >
-                <View style={styles.pickerContainer}>
-                  <Text style={styles.sliderLabel}>Feet</Text>
-                  <Picker
-                    selectedValue={height.feet}
-                    onValueChange={(value) =>
-                      setHeight((prev) => ({ ...prev, feet: value }))
-                    }
-                    style={styles.picker}
-                  >
-                    {[...Array(5)].map((_, i) => (
-                      <Picker.Item
-                        key={i + 3}
-                        label={`${i + 3}`}
-                        value={i + 3}
-                      />
-                    ))}
-                  </Picker>
-                </View>
-
-                {/* Inches Picker */}
-                <View style={styles.pickerContainer}>
-                  <Text style={styles.sliderLabel}>Inches</Text>
-                  <Picker
-                    selectedValue={height.inches}
-                    onValueChange={(value) =>
-                      setHeight((prev) => ({ ...prev, inches: value }))
-                    }
-                    style={styles.picker}
-                  >
-                    {[...Array(12)].map((_, i) => (
-                      <Picker.Item key={i} label={`${i}`} value={i} />
-                    ))}
-                  </Picker>
-                </View>
+          <TouchableWithoutFeedback onPress={() => setShowDatePicker(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <DateTimePicker
+                  value={date}
+                  mode="date"
+                  display="spinner"
+                  onChange={onChange}
+                  textColor="#333"
+                  maximumDate={new Date()} // This disables future dates
+                />
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => {
+                    saveRegistrationInfo("age", age);
+                    setShowDatePicker(false);
+                  }}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => {
-                  const formattedHeight = `${height.feet}'${height.inches}`;
-                  saveRegistrationInfo("height", formattedHeight);
-                  setShowHeight(true);
-                  setShowHeightPicker(false);
-                }}
-              >
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </SafeAreaView>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={showHeightPicker}
+          onRequestClose={() => setShowHeightPicker(false)}
+        >
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-evenly",
+                    width: "100%",
+                  }}
+                >
+                  <View style={styles.pickerContainer}>
+                    <Text style={styles.sliderLabel}>Feet</Text>
+                    <Picker
+                      selectedValue={height.feet}
+                      onValueChange={(value) =>
+                        setHeight((prev) => ({ ...prev, feet: value }))
+                      }
+                      style={styles.picker}
+                    >
+                      {[...Array(5)].map((_, i) => (
+                        <Picker.Item
+                          key={i + 3}
+                          label={`${i + 3}`}
+                          value={i + 3}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
+
+                  <View style={styles.pickerContainer}>
+                    <Text style={styles.sliderLabel}>Inches</Text>
+                    <Picker
+                      selectedValue={height.inches}
+                      onValueChange={(value) =>
+                        setHeight((prev) => ({ ...prev, inches: value }))
+                      }
+                      style={styles.picker}
+                    >
+                      {[...Array(12)].map((_, i) => (
+                        <Picker.Item key={i} label={`${i}`} value={i} />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => {
+                    const formattedHeight = `${height.feet}'${height.inches}`;
+                    saveRegistrationInfo("height", formattedHeight);
+                    setShowHeight(true);
+                    setShowHeightPicker(false);
+                  }}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 export default personalInfo;

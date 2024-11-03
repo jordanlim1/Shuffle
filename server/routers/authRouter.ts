@@ -4,10 +4,11 @@ const authController = require("../controllers/authController");
 
 router.post(
   "/createProfile",
+  authController.hashPassword,
   authController.createProfile,
   (req: Request, res: Response): void => {
-    res.status(200).json();
+    console.log("res.locals.profile", res.locals.profile);
+    res.status(200).json(res.locals.profile);
   }
 );
-
 module.exports = router;

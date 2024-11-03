@@ -1,5 +1,4 @@
 import express, { Request, Response, NextFunction } from "express";
-const multer = require("multer");
 require("dotenv").config();
 import crypto from "crypto";
 import sharp from "sharp";
@@ -22,9 +21,10 @@ const s3 = new S3Client({
   region: bucketRegion,
 } as S3ClientConfig);
 
+const Profile = require("../Models/profile");
+
 const queryController = {
   addImages: async function (req: Request, res: Response, next: NextFunction) {
-    console.log(req.files);
     const images: string[] = [];
 
     if (Array.isArray(req.files)) {
@@ -54,16 +54,6 @@ const queryController = {
     }
 
     res.locals.images = images;
-    return next();
-  },
-
-  createProfile: async function (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    console.log(req.body);
-
     return next();
   },
 };

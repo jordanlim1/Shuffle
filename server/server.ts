@@ -23,14 +23,16 @@ const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
 const accessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_ACCESS_KEY_ID;
-// mongoose
-//   .connect(MONGO_URI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//     dbName: "shuffle",
-//   })
-//   .then(() => console.log("Connected to MongoDB..."))
-//   .catch((err) => console.log("MongoDB error: ", err));
+const MONGO_URI = process.env.MONGO_URI;
+
+mongoose
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: "shuffle",
+  })
+  .then(() => console.log("Connected to MongoDB..."))
+  .catch((err) => console.log("MongoDB error: ", err));
 
 const s3 = new S3Client({
   credentials: {

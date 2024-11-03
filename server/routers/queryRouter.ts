@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 const router = express.Router();
 const queryController = require("../controllers/queryController");
+const authController = require("../controllers/authController");
 const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -14,11 +15,4 @@ router.post(
   }
 );
 
-router.post(
-  "/createProfile",
-  queryController.createProfile,
-  (req: Request, res: Response): void => {
-    res.status(200).json();
-  }
-);
 module.exports = router;

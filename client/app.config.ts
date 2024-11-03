@@ -5,5 +5,6 @@ export default {
     version: "1.0.0",
     scheme: "shuffle", // Define your custom URI scheme here
     platforms: ["ios", "android", "web"],
+    plugins: ["expo-secure-store"],
   },
 };

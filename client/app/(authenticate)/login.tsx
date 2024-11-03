@@ -7,18 +7,19 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Link } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "react-native-get-random-values";
 import CryptoJS from "crypto-js";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { saveRegistrationInfo } from "../registrationUtils";
+import { useFonts } from "expo-font";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [codeChallenge, setCodeChallenge] = useState("");
-  const [artists, setArtists] = useState<{ [key: string]: string }[]>();
+  const logo = require("../../assets/images/logo.png");
 
   const clientId = process.env.EXPO_PUBLIC_CLIENT_ID;
   const authorizationEndpoint = process.env.EXPO_PUBLIC_AUTHORIZATION_ENDPOINT;
@@ -180,16 +181,24 @@ export default function Login() {
       }
 
       saveRegistrationInfo("artists", topArtists);
-      router.push("/about");
+      router.push("/filler");
     } catch (err) {
       console.log("Error" + err);
     }
   }
 
+  const [fontsLoaded] = useFonts({
+    NotoSansMono: require("../../assets/fonts/NotoSansMono.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return null; // Don't render anything until fonts are loaded
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View>
-        <Text style={styles.title}>Shuffle</Text>
+      <View style={styles.header}>
+        <Image source={logo} style={styles.icon} />
       </View>
       <View style={styles.container}>
         <TextInput
@@ -210,21 +219,29 @@ export default function Login() {
         />
 
         <TouchableOpacity onPress={() => promptAsync()} style={styles.button}>
+          <Image
+            source={require("../../assets/images/spotifylogo.png")}
+            style={styles.logo}
+          />
           <View style={styles.buttonContent}>
-            <Image
-              source={require("../../assets/images/spotifylogo.png")}
-              style={styles.logo}
-            />
-            <Text style={styles.buttonText}>Login with Spotify</Text>
+            <Text style={styles.buttonText}>LOGIN WITH SPOTIFY</Text>
           </View>
         </TouchableOpacity>
 
-        <View style={{ alignItems: "center", marginTop: 16 }}>
-          <Text> Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/about")}>
-            <Text style={styles.linkText}> Sign up now! </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() => router.push("/about")}
+          style={styles.button}
+        >
+          <MaterialCommunityIcons
+            name="account-reactivate-outline"
+            style={styles.logo}
+            size={40}
+            color="#d3d3d3"
+          />
+          <View style={styles.buttonContent}>
+            <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -242,11 +259,26 @@ const styles = StyleSheet.create({
     color: "#1e90ff", // Blue color for the link
     fontWeight: "bold",
     marginTop: 5,
+    fontSize: 16,
+  },
+  header: {
+    alignItems: "center",
+    justifyContent: "center",
+    display: "flex",
+  },
+  signup: {
+    fontSize: 16,
+  },
+  icon: {
+    height: 300,
+    width: 300,
+    marginRight: 20,
   },
   container: {
     width: "90%",
     justifyContent: "center",
     alignItems: "center",
+    flexDirection: "column",
     padding: 30,
     borderRadius: 16, // Rounded corners
     shadowColor: "#000",
@@ -260,41 +292,48 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#ff5a79", // A fun, romantic color for the labels
     marginBottom: 8,
+    fontFamily: "NotoSansMono",
   },
   input: {
-    height: 48,
-    width: "85%",
-    borderColor: "#ff5a79",
-    borderWidth: 1,
+    height: 50,
+    width: "90%",
+    borderColor: "#d3d3d3",
+    borderWidth: 2,
     borderRadius: 12,
     paddingHorizontal: 16,
     marginBottom: 24,
-    fontSize: 16,
+    fontSize: 20,
     color: "#333",
   },
   button: {
     backgroundColor: "#000",
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    borderRadius: 10,
-    marginTop: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 40,
+    marginTop: 10,
+    width: "90%",
+    borderColor: "#d3d3d3",
+    borderWidth: 2,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
   },
   buttonText: {
     color: "white",
-    fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
   },
 
   logo: {
-    width: 30,
-    height: 30,
-    marginRight: 10,
+    width: 40,
+    height: 40,
+    left: 5,
   },
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
-    width: "100%",
+    justifyContent: "center",
+    width: "90%",
   },
   title: {
     fontSize: 50, // Large font size for the title
@@ -302,5 +341,6 @@ const styles = StyleSheet.create({
     color: "#ffb6c1", // Custom color for a unique look
     textAlign: "center",
     marginBottom: 80,
+    fontFamily: "NotoSansMono",
   },
 });

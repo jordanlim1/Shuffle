@@ -2,10 +2,10 @@ import { Button, StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getResgistrationInfo } from "../registrationUtils";
 import Dots from "../components/Dots";
 import Feather from "@expo/vector-icons/Feather";
+import * as SecureStore from "expo-secure-store";
 
 const Images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
@@ -68,6 +68,8 @@ const Images = () => {
     const age = await getResgistrationInfo("age");
     const gender = await getResgistrationInfo("gender");
     const race = await getResgistrationInfo("race");
+    const password = await SecureStore.getItemAsync("password");
+
     const height = await getResgistrationInfo("height");
     const location = await getResgistrationInfo("location");
     const distance = await getResgistrationInfo("distance");
@@ -78,6 +80,7 @@ const Images = () => {
     const body = {
       name: name,
       email: email,
+      password: password,
       age: age,
       location: location,
       distance: distance,
@@ -90,7 +93,7 @@ const Images = () => {
       images: imageNames,
     };
 
-    const res = await fetch("http://192.168.1.5:3000/query/createProfile", {
+    const res = await fetch("http://192.168.1.5:3000/auth/createProfile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

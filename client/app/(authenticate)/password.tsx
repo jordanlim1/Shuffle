@@ -16,6 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { set } from "lodash";
 import Feather from "@expo/vector-icons/Feather";
 import Dots from "../components/Dots";
+import * as SecureStore from "expo-secure-store";
 
 const Password = () => {
   const [password, setPassword] = useState("");
@@ -28,7 +29,7 @@ const Password = () => {
     validatePassword(password);
   }, [password, confirmPassword]);
 
-  function handleNext() {
+  async function handleNext() {
     if (
       (confirmPassword && password !== confirmPassword) ||
       !confirmPassword ||
@@ -37,6 +38,8 @@ const Password = () => {
       alert("Please fill out all fields.");
       return -1;
     }
+    await SecureStore.setItemAsync("password", password);
+
     router.push("/location");
   }
 
