@@ -165,8 +165,8 @@ export default function Login() {
       const artists = await artistsData.json();
       const credentials = await credentialsData.json();
 
-      saveRegistrationInfo("name", credentials.display_name);
-      saveRegistrationInfo("email", credentials.email);
+      await saveRegistrationInfo("name", credentials.display_name);
+      await saveRegistrationInfo("email", credentials.email);
 
       const topArtists = [];
 
@@ -179,8 +179,8 @@ export default function Login() {
         });
       }
 
-      saveRegistrationInfo("artists", JSON.stringify(topArtists));
-      router.push("/personalInfo");
+      saveRegistrationInfo("artists", topArtists);
+      router.push("/about");
     } catch (err) {
       console.log("Error" + err);
     }

@@ -5,10 +5,11 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getResgistrationInfo } from "../registrationUtils";
 import Dots from "../components/Dots";
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@expo/vector-icons/Feather";
 
 const Images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
+  const [imageNames, setImageNames] = useState<string[]>([]);
 
   const pickImage = async (index: number) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,6 +28,7 @@ const Images = () => {
 
   const addImages = async () => {
     try {
+      console.log("hello");
       const formData = new FormData();
       for (const uri of images) {
         if (uri) {
@@ -46,9 +48,9 @@ const Images = () => {
       });
 
       const data = await res.json();
-      console.log(data);
+      setImageNames(data);
 
-      finishProfile()
+      finishProfile();
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -65,54 +67,72 @@ const Images = () => {
     const email = await getResgistrationInfo("email");
     const age = await getResgistrationInfo("age");
     const gender = await getResgistrationInfo("gender");
+    const race = await getResgistrationInfo("race");
+    const height = await getResgistrationInfo("height");
+    const location = await getResgistrationInfo("location");
+    const distance = await getResgistrationInfo("distance");
+    const preference = await getResgistrationInfo("preference");
     const orientation = await getResgistrationInfo("orientation");
-    const password = await getResgistrationInfo("password");
     const artists = await getResgistrationInfo("artists");
 
     const body = {
-      name,
-      email,
-      password,
-      age,
-      gender,
-      orientation,
-      artists,
-      images,
+      name: name,
+      email: email,
+      age: age,
+      location: location,
+      distance: distance,
+      preference: preference,
+      height: height,
+      race: race,
+      gender: gender,
+      orientation: orientation,
+      artists: artists,
+      images: imageNames,
     };
 
-    const res = await fetch("http://192.168.1.35:3000/query/createProfile", {
+    const res = await fetch("http://192.168.1.5:3000/query/createProfile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
+
+    const data = await res.json();
+    console.log("data", data);
   }
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-      <View style={styles.titleContainer}>
+        <View style={styles.titleContainer}>
           <Text style={styles.title}>Images</Text>
           <Dots />
         </View>
-      <View style={styles.gridContainer}>
-        {images.map((imageUri: string | null, idx: number) => (
-          <View key={idx} style={styles.imageBox}>
-            {imageUri ? (
-              <View style={styles.imageWrapper}>
-                <Image source={{ uri: imageUri }} style={styles.image} />
-                <Pressable style={styles.deleteButton} onPress={() => handleDelete(idx)}>
-                  <Text style={styles.deleteText}><Feather name="x-circle" size={36} color="black" /></Text>
+        <View style={styles.gridContainer}>
+          {images.map((imageUri: string | null, idx: number) => (
+            <View key={idx} style={styles.imageBox}>
+              {imageUri ? (
+                <View style={styles.imageWrapper}>
+                  <Image source={{ uri: imageUri }} style={styles.image} />
+                  <Pressable
+                    style={styles.deleteButton}
+                    onPress={() => handleDelete(idx)}
+                  >
+                    <Text style={styles.deleteText}>
+                      <Feather name="x-circle" size={36} color="black" />
+                    </Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <Pressable
+                  style={styles.uploadBox}
+                  onPress={() => pickImage(idx)}
+                >
+                  <Text style={styles.uploadText}>Upload Image</Text>
                 </Pressable>
-              </View>
-            ) : (
-              <Pressable style={styles.uploadBox} onPress={() => pickImage(idx)}>
-                <Text style={styles.uploadText}>Upload Image</Text>
-              </Pressable>
-            )}
-          </View>
-        ))}
-      </View>
-  
+              )}
+            </View>
+          ))}
+        </View>
       </View>
       <Pressable style={styles.finishButton} onPress={addImages}>
         <Text style={styles.finishText}>Create Profile</Text>
@@ -142,7 +162,7 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "space-evenly",
     width: "100%",
-    height: "100%"
+    height: "100%",
   },
   title: {
     fontSize: 40,
@@ -150,12 +170,12 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: -30,
   },
-  
+
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-evenly",
-    alignItems:"center",
+    alignItems: "center",
     marginTop: 100,
   },
   imageBox: {
@@ -200,12 +220,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 80,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   finishText: {
     color: "white",
     textAlign: "center",
     fontSize: 30,
-    fontStyle:"italic",
+    fontStyle: "italic",
   },
 });

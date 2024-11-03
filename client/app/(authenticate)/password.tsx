@@ -37,7 +37,6 @@ const Password = () => {
       alert("Please fill out all fields.");
       return -1;
     }
-    saveRegistrationInfo("password", password);
     router.push("/location");
   }
 

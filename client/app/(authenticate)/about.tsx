@@ -32,7 +32,7 @@ import * as Location from "expo-location";
 import Dots from "../components/Dots";
 import NextButton from "../components/NextButton";
 import { Picker } from "@react-native-picker/picker";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 const personalInfo = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -61,16 +61,17 @@ const personalInfo = () => {
 
   //if user signed in w/ spotify oauth, this fields should be prepopulated
   useEffect(() => {
-    {
-      async () => {
-        const storedName = await getResgistrationInfo("name");
-        const storedEmail = await getResgistrationInfo("email");
-
-        if (storedName) setName(storedName);
-        if (storedEmail) setEmail(storedEmail);
-      };
-    }
+    prefill();
   }, []);
+
+  const prefill = async () => {
+    const storedName = await getResgistrationInfo("name");
+    const storedEmail = await getResgistrationInfo("email");
+
+    console.log("stored", storedName, storedEmail);
+    if (storedName) setName(storedName);
+    if (storedEmail) setEmail(storedEmail);
+  };
 
   const handleNextPress = async () => {
     const errors = {
@@ -190,7 +191,8 @@ const personalInfo = () => {
 
             <TouchableOpacity
               onPress={() => setShowDatePicker(true)}
-              style={styles.dateInput}>
+              style={styles.dateInput}
+            >
               <Text style={styles.dateText}>{birthdayPlaceholder}</Text>
             </TouchableOpacity>
             {validationErrors.age && <Text style={styles.errorText}>*</Text>}
@@ -207,9 +209,11 @@ const personalInfo = () => {
           <TouchableOpacity
             onPress={() => {
               setShowHeightPicker(true);
-              if(!height.feet && !height.inches) setHeight({feet: 3, inches: 0})
+              if (!height.feet && !height.inches)
+                setHeight({ feet: 3, inches: 0 });
             }}
-            style={styles.dateInput}>
+            style={styles.dateInput}
+          >
             <Text style={styles.dateText}>
               {showHeight
                 ? `${height.feet} ft ${height.inches} in`
@@ -221,7 +225,8 @@ const personalInfo = () => {
 
         <TouchableOpacity
           style={styles.floatingButton}
-          onPress={handleNextPress}>
+          onPress={handleNextPress}
+        >
           <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
       </View>
@@ -230,7 +235,8 @@ const personalInfo = () => {
         transparent={true}
         animationType="slide"
         visible={showDatePicker}
-        onRequestClose={() => setShowDatePicker(false)}>
+        onRequestClose={() => setShowDatePicker(false)}
+      >
         <TouchableWithoutFeedback onPress={() => setShowDatePicker(false)}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -247,7 +253,8 @@ const personalInfo = () => {
                 onPress={() => {
                   saveRegistrationInfo("age", age);
                   setShowDatePicker(false);
-                }}>
+                }}
+              >
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
             </View>
@@ -259,7 +266,8 @@ const personalInfo = () => {
         transparent={true}
         animationType="slide"
         visible={showHeightPicker}
-        onRequestClose={() => setShowHeightPicker(false)}>
+        onRequestClose={() => setShowHeightPicker(false)}
+      >
         <TouchableWithoutFeedback>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -270,7 +278,8 @@ const personalInfo = () => {
                   alignItems: "center",
                   justifyContent: "space-evenly",
                   width: "100%",
-                }}>
+                }}
+              >
                 <View style={styles.pickerContainer}>
                   <Text style={styles.sliderLabel}>Feet</Text>
                   <Picker
@@ -278,7 +287,8 @@ const personalInfo = () => {
                     onValueChange={(value) =>
                       setHeight((prev) => ({ ...prev, feet: value }))
                     }
-                    style={styles.picker}>
+                    style={styles.picker}
+                  >
                     {[...Array(5)].map((_, i) => (
                       <Picker.Item
                         key={i + 3}
@@ -297,7 +307,8 @@ const personalInfo = () => {
                     onValueChange={(value) =>
                       setHeight((prev) => ({ ...prev, inches: value }))
                     }
-                    style={styles.picker}>
+                    style={styles.picker}
+                  >
                     {[...Array(12)].map((_, i) => (
                       <Picker.Item key={i} label={`${i}`} value={i} />
                     ))}
@@ -307,10 +318,12 @@ const personalInfo = () => {
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => {
-                  saveRegistrationInfo("height", height);
+                  const formattedHeight = `${height.feet}'${height.inches}`;
+                  saveRegistrationInfo("height", formattedHeight);
                   setShowHeight(true);
                   setShowHeightPicker(false);
-                }}>
+                }}
+              >
                 <Text style={styles.closeButtonText}>Close</Text>
               </TouchableOpacity>
             </View>
