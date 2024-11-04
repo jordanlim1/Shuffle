@@ -5,18 +5,17 @@ import {
   TextInput,
   TouchableOpacity,
   Animated,
+  Keyboard,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
-import { saveRegistrationInfo } from "../registrationUtils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { set } from "lodash";
 import Feather from "@expo/vector-icons/Feather";
-import Dots from "../components/Dots";
+import Dots from "../reusable/Dots";
 import * as SecureStore from "expo-secure-store";
+import { TouchableWithoutFeedback } from "react-native";
 
 const Password = () => {
   const [password, setPassword] = useState("");
@@ -66,73 +65,75 @@ const Password = () => {
     if (!message) return true;
   };
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Password</Text>
-          <Dots />
-        </View>
-        <View style={styles.inputSection}>
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="lock-open-outline"
-              size={30}
-              color="black"
-              style={styles.icon}
-            />
-            <TextInput
-              style={styles.textInput}
-              textContentType="password"
-              secureTextEntry={!show}
-              onChangeText={(text) => setPassword(text)}
-              placeholder="New Password"
-              placeholderTextColor={"#D3D3D3"}
-            />
-            <TouchableOpacity onPress={() => setShow(!show)}>
-              <Feather
-                name={show ? "eye" : "eye-off"}
-                size={24}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Password</Text>
+            <Dots />
+          </View>
+          <View style={styles.inputSection}>
+            <View style={styles.inputContainer}>
+              <Ionicons
+                name="lock-open-outline"
+                size={30}
                 color="black"
+                style={styles.icon}
               />
-            </TouchableOpacity>
+              <TextInput
+                style={styles.textInput}
+                textContentType="password"
+                secureTextEntry={!show}
+                onChangeText={(text) => setPassword(text)}
+                placeholder="New Password"
+                placeholderTextColor={"#D3D3D3"}
+              />
+              <TouchableOpacity onPress={() => setShow(!show)}>
+                <Feather
+                  name={show ? "eye" : "eye-off"}
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.validationMessage}>{errorMessage}</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={30}
+                color="black"
+                style={styles.icon}
+              />
+              <TextInput
+                style={styles.textInput}
+                textContentType="password"
+                secureTextEntry={!confirmShow}
+                onChangeText={setConfirmPassword}
+                placeholder="Confirm Password"
+                placeholderTextColor={"#D3D3D3"}
+              />
+              <TouchableOpacity onPress={() => setConfirmShow(!confirmShow)}>
+                <Feather
+                  name={confirmShow ? "eye" : "eye-off"}
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+            {confirmPassword && password !== confirmPassword && (
+              <Text style={styles.validationMessage}>
+                Passwords do not match.
+              </Text>
+            )}
           </View>
 
-          <Text style={styles.validationMessage}>{errorMessage}</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons
-              name="lock-closed-outline"
-              size={30}
-              color="black"
-              style={styles.icon}
-            />
-            <TextInput
-              style={styles.textInput}
-              textContentType="password"
-              secureTextEntry={!confirmShow}
-              onChangeText={setConfirmPassword}
-              placeholder="Confirm Password"
-              placeholderTextColor={"#D3D3D3"}
-            />
-            <TouchableOpacity onPress={() => setConfirmShow(!confirmShow)}>
-              <Feather
-                name={confirmShow ? "eye" : "eye-off"}
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-          </View>
-          {confirmPassword && password !== confirmPassword && (
-            <Text style={styles.validationMessage}>
-              Passwords do not match.
-            </Text>
-          )}
+          <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
+            <AntDesign name="arrowright" size={30} color="white" />
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
-          <AntDesign name="arrowright" size={30} color="white" />
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 

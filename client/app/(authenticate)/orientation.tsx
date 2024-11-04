@@ -11,8 +11,8 @@ import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { saveRegistrationInfo } from "../registrationUtils";
-import Dots from "../components/Dots";
-import NextButton from "../components/NextButton";
+import Dots from "../reusable/Dots";
+import NextButton from "../reusable/NextButton";
 
 const Orientation = () => {
   const options = [
@@ -53,7 +53,7 @@ const Orientation = () => {
             </View>
           ))}
         </View>
-          <NextButton state={orientation} route="race" screenName="orientation"/>
+        <NextButton state={orientation} route="race" screenName="orientation" />
       </View>
     </SafeAreaView>
   );

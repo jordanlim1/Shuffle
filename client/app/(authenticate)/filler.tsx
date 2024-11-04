@@ -3,6 +3,7 @@ import { View, Text, Animated, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
+import { useFont } from "../reusable/useFont";
 
 const words = ["Let's", "Finish", "Your", "Profile!"];
 
@@ -35,6 +36,7 @@ const FillerScreen = () => {
     });
   }, [animatedValues, navigation]);
 
+  useFont();
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.textContainer}>
@@ -69,5 +71,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginVertical: 10,
     textAlign: "center",
+    fontFamily: "NotoSansMono",
   },
 });

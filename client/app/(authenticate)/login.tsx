@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import "react-native-get-random-values";
@@ -16,6 +18,7 @@ import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { saveRegistrationInfo } from "../registrationUtils";
 import { useFonts } from "expo-font";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [codeChallenge, setCodeChallenge] = useState("");
@@ -187,63 +190,57 @@ export default function Login() {
     }
   }
 
-  const [fontsLoaded] = useFonts({
-    NotoSansMono: require("../../assets/fonts/NotoSansMono.ttf"),
-  });
-
-  if (!fontsLoaded) {
-    return null; // Don't render anything until fonts are loaded
-  }
-
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        <Image source={logo} style={styles.icon} />
-      </View>
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor={"#333"}
-          onChangeText={(text) => handleChange("email", text)}
-          value={credentials.email}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor={"#333"}
-          secureTextEntry={true}
-          onChangeText={(text) => handleChange("password", text)}
-          value={credentials.password}
-        />
-
-        <TouchableOpacity onPress={() => promptAsync()} style={styles.button}>
-          <Image
-            source={require("../../assets/images/spotifylogo.png")}
-            style={styles.logo}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.header}>
+          <Image source={logo} style={styles.icon} />
+        </View>
+        <View style={styles.container}>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor={"#333"}
+            onChangeText={(text) => handleChange("email", text)}
+            value={credentials.email}
           />
-          <View style={styles.buttonContent}>
-            <Text style={styles.buttonText}>LOGIN WITH SPOTIFY</Text>
-          </View>
-        </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => router.push("/about")}
-          style={styles.button}
-        >
-          <MaterialCommunityIcons
-            name="account-reactivate-outline"
-            style={styles.logo}
-            size={40}
-            color="#d3d3d3"
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor={"#333"}
+            secureTextEntry={true}
+            onChangeText={(text) => handleChange("password", text)}
+            value={credentials.password}
           />
-          <View style={styles.buttonContent}>
-            <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+
+          <TouchableOpacity onPress={() => promptAsync()} style={styles.button}>
+            <Image
+              source={require("../../assets/images/spotifylogo.png")}
+              style={styles.logo}
+            />
+            <View style={styles.buttonContent}>
+              <Text style={styles.buttonText}>LOGIN WITH SPOTIFY</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.push("/about")}
+            style={styles.button}
+          >
+            <MaterialCommunityIcons
+              name="account-reactivate-outline"
+              style={styles.logo}
+              size={40}
+              color="#d3d3d3"
+            />
+            <View style={styles.buttonContent}>
+              <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 

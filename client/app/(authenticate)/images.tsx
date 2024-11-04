@@ -2,10 +2,16 @@ import { Button, StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { getResgistrationInfo } from "../registrationUtils";
-import Dots from "../components/Dots";
+import {
+  getResgistrationInfo,
+  saveRegistrationInfo,
+} from "../registrationUtils";
+import Dots from "../reusable/Dots";
 import Feather from "@expo/vector-icons/Feather";
-import * as SecureStore from "expo-secure-store";
+import NextButton from "../reusable/NextButton";
+import { TouchableOpacity } from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { router } from "expo-router";
 
 const Images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
@@ -50,7 +56,7 @@ const Images = () => {
       const data = await res.json();
       setImageNames(data);
 
-      finishProfile();
+      return res.ok;
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -62,45 +68,16 @@ const Images = () => {
     setImages(updatedImages);
   }
 
-  async function finishProfile() {
-    const name = await getResgistrationInfo("name");
-    const email = await getResgistrationInfo("email");
-    const age = await getResgistrationInfo("age");
-    const gender = await getResgistrationInfo("gender");
-    const race = await getResgistrationInfo("race");
-    const password = await SecureStore.getItemAsync("password");
+  async function handleNext() {
+    const uploadedImagesCount = images.filter((uri) => uri !== "").length;
 
-    const height = await getResgistrationInfo("height");
-    const location = await getResgistrationInfo("location");
-    const distance = await getResgistrationInfo("distance");
-    const preference = await getResgistrationInfo("preference");
-    const orientation = await getResgistrationInfo("orientation");
-    const artists = await getResgistrationInfo("artists");
+    if (uploadedImagesCount < 5) {
+      alert("Upload at least 5 photos to continue.");
+      return;
+    }
 
-    const body = {
-      name: name,
-      email: email,
-      password: password,
-      age: age,
-      location: location,
-      distance: distance,
-      preference: preference,
-      height: height,
-      race: race,
-      gender: gender,
-      orientation: orientation,
-      artists: artists,
-      images: imageNames,
-    };
-
-    const res = await fetch("http://192.168.1.5:3000/auth/createProfile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    const data = await res.json();
-    console.log("data", data);
+    const uploadImages = await addImages();
+    if (uploadImages) router.push("/finish");
   }
 
   return (
@@ -136,10 +113,10 @@ const Images = () => {
             </View>
           ))}
         </View>
+        <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
+          <AntDesign name="arrowright" size={30} color="white" />
+        </TouchableOpacity>
       </View>
-      <Pressable style={styles.finishButton} onPress={addImages}>
-        <Text style={styles.finishText}>Create Profile</Text>
-      </Pressable>
     </SafeAreaView>
   );
 };
@@ -179,7 +156,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-evenly",
     alignItems: "center",
-    marginTop: 100,
+    marginTop: 25,
   },
   imageBox: {
     width: "45%",
@@ -216,19 +193,21 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 10,
   },
-  finishButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+
+  floatingButton: {
+    position: "absolute",
+    bottom: 30,
+    right: 40,
     backgroundColor: "#ff5a79",
-    bottom: 0,
-    height: 80,
-    alignItems: "center",
+    borderRadius: 35,
+    width: 70,
+    height: 70,
     justifyContent: "center",
-  },
-  finishText: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 30,
-    fontStyle: "italic",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 5,
   },
 });

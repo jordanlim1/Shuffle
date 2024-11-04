@@ -11,8 +11,8 @@ import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { saveRegistrationInfo } from "../registrationUtils";
-import Dots from "../components/Dots";
-import NextButton from "../components/NextButton";
+import Dots from "../reusable/Dots";
+import NextButton from "../reusable/NextButton";
 
 const Race = () => {
   const options = [
@@ -61,7 +61,7 @@ const Race = () => {
             </View>
           ))}
         </View>
-        <NextButton state={race} route="images" screenName="race"/>
+        <NextButton state={race} route="images" screenName="race" />
       </View>
     </SafeAreaView>
   );

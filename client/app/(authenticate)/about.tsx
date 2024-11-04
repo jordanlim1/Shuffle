@@ -30,8 +30,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Slider from "@react-native-community/slider";
 import { debounce } from "lodash";
 import * as Location from "expo-location";
-import Dots from "../components/Dots";
-import NextButton from "../components/NextButton";
+import Dots from "../reusable/Dots";
+import NextButton from "../reusable/NextButton";
 import { Picker } from "@react-native-picker/picker";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 const personalInfo = () => {
@@ -139,7 +139,7 @@ const personalInfo = () => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.titleContainer}>

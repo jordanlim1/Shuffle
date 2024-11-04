@@ -20,8 +20,8 @@ import { router } from "expo-router";
 import { saveRegistrationInfo } from "../registrationUtils";
 import { Animated } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Dots from "../components/Dots";
-import NextButton from "../components/NextButton";
+import Dots from "../reusable/Dots";
+import NextButton from "../reusable/NextButton";
 import Slider from "@react-native-community/slider";
 import { debounce } from "lodash";
 
@@ -107,7 +107,8 @@ const LocationScreen = () => {
               alignItems: "center",
               justifyContent: "center",
               width: "100%",
-            }}>
+            }}
+          >
             <MapView
               style={{
                 width: "100%",
@@ -115,7 +116,8 @@ const LocationScreen = () => {
                 marginTop: 20,
               }}
               region={region}
-              onRegionChangeComplete={handleRegionChangeComplete}>
+              onRegionChangeComplete={handleRegionChangeComplete}
+            >
               <Circle
                 center={region}
                 radius={value * 1609.34} // Adjust the radius as needed

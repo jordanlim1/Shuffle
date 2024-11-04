@@ -5,6 +5,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   return (
     <Stack>
+      <Stack.Screen name="welcome" options={{ headerShown: false }} />
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="filler" options={{ headerShown: false }} />
       <Stack.Screen name="about" options={{ headerShown: false }} />
@@ -15,6 +16,7 @@ export default function RootLayout() {
       <Stack.Screen name="orientation" options={{ headerShown: false }} />
       <Stack.Screen name="race" options={{ headerShown: false }} />
       <Stack.Screen name="images" options={{ headerShown: false }} />
+      <Stack.Screen name="finish" options={{ headerShown: false }} />
     </Stack>
   );
 }

@@ -16,8 +16,8 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Dots from "../components/Dots";
-import NextButton from "../components/NextButton";
+import Dots from "../reusable/Dots";
+import NextButton from "../reusable/NextButton";
 const Gender = () => {
   const [gender, setGender] = useState("");
 
@@ -62,7 +62,6 @@ const Gender = () => {
     setGender(genderValue);
   }
 
- 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -78,13 +77,14 @@ const Gender = () => {
                 styles.genderButton,
                 genders.value === gender ? styles.selected : null,
               ]}
-              onPress={() => handlePress(genders.value)}>
+              onPress={() => handlePress(genders.value)}
+            >
               {genders.icon}
               <Text style={styles.genderText}>{genders.value}</Text>
             </TouchableOpacity>
           ))}
         </View>
-      <NextButton state={gender} route={"preference"} screenName="gender"/>
+        <NextButton state={gender} route={"preference"} screenName="gender" />
       </View>
     </SafeAreaView>
   );

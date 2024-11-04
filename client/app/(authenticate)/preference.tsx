@@ -16,8 +16,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Dots from "../components/Dots";
-import NextButton from "../components/NextButton";
+import Dots from "../reusable/Dots";
+import NextButton from "../reusable/NextButton";
 
 const Preference = () => {
   const [preferences, setPreferences] = useState("");
@@ -64,8 +64,6 @@ const Preference = () => {
     setPreferences(preference);
   }
 
- 
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -81,14 +79,19 @@ const Preference = () => {
                 styles.optionButton,
                 option.value === preferences ? styles.selected : null,
               ]}
-              onPress={() => handlePress(option.value)}>
+              onPress={() => handlePress(option.value)}
+            >
               {option.icon}
               <Text style={styles.optionText}>{option.value}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-          <NextButton state={preferences} route="orientation" screenName="preference"/>
+        <NextButton
+          state={preferences}
+          route="orientation"
+          screenName="preference"
+        />
       </View>
     </SafeAreaView>
   );
