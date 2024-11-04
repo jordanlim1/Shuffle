@@ -76,19 +76,14 @@ const LocationScreen = () => {
     getLocationName(newRegion.latitude, newRegion.longitude);
   };
 
-  const saveRegistrationInfoDebounced = debounce(
-    (screenName: string, value: number) => {
-      saveRegistrationInfo(screenName, value);
-    },
-    300
-  );
-
   const handleNext = () => {
     if (loading) {
       alert("Please select your location.");
       return;
     }
+
     saveRegistrationInfo("location", region);
+    saveRegistrationInfo("distance", value);
     router.push("/gender");
   };
   return (
@@ -151,7 +146,6 @@ const LocationScreen = () => {
               onValueChange={(newValue) => {
                 const roundedValue = Math.floor(newValue);
                 setValue(roundedValue);
-                saveRegistrationInfoDebounced("distance", roundedValue);
               }}
             />
             <Text style={styles.sliderLabel}>

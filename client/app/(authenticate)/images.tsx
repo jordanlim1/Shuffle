@@ -48,15 +48,16 @@ const Images = () => {
         }
       }
 
-      const res = await fetch("http://192.168.1.5:3000/query/images", {
+      const res = await fetch("http://192.168.1.78:3000/query/images", {
         method: "POST",
         body: formData,
       });
 
       const data = await res.json();
+      console.log(data);
       setImageNames(data);
 
-      return res.ok;
+      if (imageNames) return res.ok;
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -71,12 +72,13 @@ const Images = () => {
   async function handleNext() {
     const uploadedImagesCount = images.filter((uri) => uri !== "").length;
 
-    if (uploadedImagesCount < 5) {
-      alert("Upload at least 5 photos to continue.");
-      return;
-    }
+    // if (uploadedImagesCount < 5) {
+    //   alert("Upload at least 5 photos to continue.");
+    //   return;
+    // }
 
     const uploadImages = await addImages();
+    await saveRegistrationInfo("images", images);
     if (uploadImages) router.push("/finish");
   }
 
