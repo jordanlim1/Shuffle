@@ -2,13 +2,9 @@ import { Button, StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import {
-  getResgistrationInfo,
-  saveRegistrationInfo,
-} from "../registrationUtils";
+import { saveRegistrationInfo } from "../registrationUtils";
 import Dots from "../reusable/Dots";
 import Feather from "@expo/vector-icons/Feather";
-import NextButton from "../reusable/NextButton";
 import { TouchableOpacity } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router } from "expo-router";
@@ -33,7 +29,6 @@ const Images = () => {
 
   const addImages = async () => {
     try {
-      console.log("hello");
       const formData = new FormData();
       for (const uri of images) {
         if (uri) {

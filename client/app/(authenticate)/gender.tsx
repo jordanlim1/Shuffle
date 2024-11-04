@@ -1,21 +1,9 @@
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  getResgistrationInfo,
-  saveRegistrationInfo,
-} from "../registrationUtils";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import Dots from "../reusable/Dots";
 import NextButton from "../reusable/NextButton";
 const Gender = () => {

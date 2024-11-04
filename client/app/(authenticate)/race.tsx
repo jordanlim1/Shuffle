@@ -1,15 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Animated,
-} from "react-native";
+import { SafeAreaView, View, Text, StyleSheet } from "react-native";
 import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { saveRegistrationInfo } from "../registrationUtils";
 import Dots from "../reusable/Dots";
 import NextButton from "../reusable/NextButton";

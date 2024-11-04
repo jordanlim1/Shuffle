@@ -84,7 +84,6 @@ const personalInfo = () => {
 
     setValidationErrors(errors);
 
-    // Only proceed if all fields are filled
     if (!Object.values(errors).includes(true)) {
       if (!email.includes("@")) {
         alert("Invalid email format.");
@@ -121,16 +120,16 @@ const personalInfo = () => {
 
     if (token && timestamp) {
       const tokenAge = new Date().getTime() - JSON.parse(timestamp);
-      const expiryTime = 30 * 60 * 60 * 1000; // 30 hours in milliseconds
+      const expiryTime = 30 * 60 * 60 * 1000;
 
       if (tokenAge < expiryTime) {
-        return token; // Token is still valid
+        return token;
       } else {
         // Token expired
         await AsyncStorage.removeItem("access_token");
         await AsyncStorage.removeItem("token_timestamp");
         console.log("Access token has expired. Please re-authenticate.");
-        return null; // Token expired, return null to indicate this
+        return null;
       }
     } else {
       console.log("No token found. Please authenticate.");

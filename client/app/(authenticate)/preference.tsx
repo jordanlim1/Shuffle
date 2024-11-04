@@ -1,19 +1,12 @@
 import {
-  Animated,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  getResgistrationInfo,
-  saveRegistrationInfo,
-} from "../registrationUtils";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Dots from "../reusable/Dots";
