@@ -16,8 +16,8 @@ import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import { saveRegistrationInfo } from "../registrationUtils";
-import { useFonts } from "expo-font";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import * as SecureStore from "expo-secure-store";
 
 export default function Login() {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -127,7 +127,7 @@ export default function Login() {
     if (response.access_token) {
       const timestamp = new Date().getTime(); // Current time in milliseconds
 
-      await AsyncStorage.setItem("access_token", response.access_token);
+      await SecureStore.setItemAsync("access_token", response.access_token);
       await AsyncStorage.setItem("token_timestamp", JSON.stringify(timestamp)); // Save timestamp
 
       getProfile(response.access_token);

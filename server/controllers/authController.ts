@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 const Profile = require("../Models/profile");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 
 const authController = {
   hashPassword: async function (
@@ -22,7 +23,6 @@ const authController = {
         }
         delete req.body.password;
 
-        console.log("Hashed password:", hash);
         const newProfile = { ...req.body, password: hash };
         res.locals.profile = newProfile;
         return next();
@@ -37,23 +37,23 @@ const authController = {
   ) {
     console.log(req.body);
 
-    const { email } = req.body;
-
     try {
-      const profile = await Profile.findOne({ email: email });
-
-      console.log("found profile?", profile);
-
-      if (profile === null) {
+    
         console.log("we are in exisitng profile", res.locals.profile);
 
+        //new profile w/ hashed password into db
         const newProfile = await Profile.create(res.locals.profile);
+
+        
+
 
         console.log("new profile:", newProfile);
 
+
+
         res.locals.profile = newProfile;
         return next();
-      }
+      
     } catch (err) {
       console.log("Error in creating profile", err);
     }

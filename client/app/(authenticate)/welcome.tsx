@@ -66,8 +66,9 @@ export default function Welcome() {
         </Animated.View>
         <Animated.Text style={[styles.welcomeText, { opacity: textOpacity }]}>
           Welcome to Shuffle
+          
         </Animated.Text>
-
+   
         <Animated.View
           style={[styles.lottieContainer, { opacity: lottieOpacity }]}
         >
@@ -78,13 +79,13 @@ export default function Welcome() {
             loop={false}
             speed={0.6}
           />
-          <LottieView
-            source={require("../../assets/hearts.json")}
+          {/* <LottieView
+            source={require("../../assets/heart.json")}
             style={styles.lottieOverlay}
             autoPlay
             loop={false}
             speed={0.9}
-          />
+          /> */}
         </Animated.View>
       </View>
     </SafeAreaView>
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   },
   lottieContainer: {
     position: "absolute",
-    top: "45%",
+    top: "40%",
     alignItems: "center",
     justifyContent: "center",
   },

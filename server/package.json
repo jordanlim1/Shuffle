@@ -11,6 +11,7 @@
     "expo-image-multiple-picker": "^4.8.3",
     "expo-media-library": "^16.0.5",
     "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.2",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.7",
