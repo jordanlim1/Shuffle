@@ -42,7 +42,6 @@ const finish = () => {
       images: images,
     };
 
-    console.log(body);
 
     const res = await fetch("http://192.168.1.78:3000/auth/createProfile", {
       method: "POST",

@@ -77,10 +77,7 @@ const LocationScreen = () => {
   };
 
   const handleNext = () => {
-    if (loading) {
-      alert("Please select your location.");
-      return;
-    }
+
 
     saveRegistrationInfo("location", region);
     saveRegistrationInfo("distance", value);
@@ -153,7 +150,7 @@ const LocationScreen = () => {
             </Text>
           </View>
         )}
-        <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
+        <TouchableOpacity style={styles.floatingButton} onPress={handleNext} disabled={loading}>
           <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
       </View>
