@@ -15,7 +15,6 @@ import { router } from "expo-router";
 
 const Images = () => {
   const [images, setImages] = useState<string[]>(["", "", "", "", "", ""]);
-  const [imageNames, setImageNames] = useState<string[]>([]);
 
   const pickImage = async (index: number) => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -54,10 +53,11 @@ const Images = () => {
       });
 
       const data = await res.json();
-      console.log(data);
-      setImageNames(data);
 
-      if (imageNames) return res.ok;
+      if (data) {
+        await saveRegistrationInfo("images", data);
+        return res.ok;
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
     }
@@ -72,13 +72,12 @@ const Images = () => {
   async function handleNext() {
     const uploadedImagesCount = images.filter((uri) => uri !== "").length;
 
-    // if (uploadedImagesCount < 5) {
-    //   alert("Upload at least 5 photos to continue.");
-    //   return;
-    // }
+    if (uploadedImagesCount < 5) {
+      alert("Upload at least 5 photos to continue.");
+      return;
+    }
 
     const uploadImages = await addImages();
-    await saveRegistrationInfo("images", images);
     if (uploadImages) router.push("/finish");
   }
 

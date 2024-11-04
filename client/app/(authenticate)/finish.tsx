@@ -51,7 +51,6 @@ const finish = () => {
     });
 
     const data = await res.json();
-    console.log("data", data);
 
     if (res.ok) clearAllScreenData();
   }

@@ -90,10 +90,10 @@ const personalInfo = () => {
         alert("Invalid email format.");
         return;
       }
-      // const verified = await getStoredAccessToken();
+      const verified = await getStoredAccessToken();
       saveRegistrationInfo("name", name);
       saveRegistrationInfo("email", email);
-      router.push("/password");
+      router.push(verified ? "/location" : "/password");
     }
   };
 
