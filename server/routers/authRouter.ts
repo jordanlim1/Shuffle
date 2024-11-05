@@ -7,8 +7,7 @@ router.post(
   authController.hashPassword,
   authController.createProfile,
   (req: Request, res: Response): void => {
-    console.log("res.locals.profile", res.locals.profile);
-    res.status(200).json(res.locals.profile);
+    res.status(200).json(res.locals.profileJWT);
   }
 );
 module.exports = router;
