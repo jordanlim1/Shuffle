@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 require("dotenv").config();
 import crypto from "crypto";
 import sharp from "sharp";
+const Profile = require("../Models/profile");
 
 import { S3Client, S3ClientConfig, PutObjectCommand } from "@aws-sdk/client-s3";
 
@@ -20,8 +21,6 @@ const s3 = new S3Client({
   },
   region: bucketRegion,
 } as S3ClientConfig);
-
-const Profile = require("../Models/profile");
 
 const queryController = {
   addImages: async function (req: Request, res: Response, next: NextFunction) {
@@ -55,6 +54,45 @@ const queryController = {
 
     res.locals.images = images;
     return next();
+  },
+
+  getProfile: async function (req: Request, res: Response, next: NextFunction) {
+    try {
+      const { profile_id } = req.params;
+
+      const profile = await Profile.findOne({ _id: profile_id });
+
+      const {
+        name,
+        age,
+        height,
+        gender,
+        location,
+        distance,
+        race,
+        artists,
+        images,
+      } = profile;
+
+      res.locals.profile = {
+        name,
+        age,
+        height,
+        gender,
+        location,
+        distance,
+        race,
+        artists,
+        images,
+      };
+
+      return next();
+    } catch (error) {
+      return next({
+        message: "Error finding profile in getProfile middleware",
+        error: error,
+      });
+    }
   },
 };
 

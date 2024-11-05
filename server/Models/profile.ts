@@ -5,7 +5,7 @@ const profileSchema = new Schema({
   email: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   password: { type: String },
-  age: { type: String, required: true },
+  age: { type: Number, required: true },
   height: { type: String, required: true },
   gender: { type: String, required: true },
   preference: { type: String, required: true },

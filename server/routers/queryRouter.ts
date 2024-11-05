@@ -15,4 +15,12 @@ router.post(
   }
 );
 
+router.get(
+  "/profile/:profile_id",
+  queryController.getProfile,
+  (req: Request, res: Response): void => {
+    console.log("res.locals", res.locals.profile);
+    res.status(200).json(res.locals.profile);
+  }
+);
 module.exports = router;

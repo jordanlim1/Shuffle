@@ -13,6 +13,7 @@ const authController = {
     const { password } = req.body;
 
     if (!password) {
+      console.log(req.body);
       res.locals.profile = req.body;
       return next();
     }
