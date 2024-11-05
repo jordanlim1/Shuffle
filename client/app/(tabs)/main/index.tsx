@@ -1,16 +1,16 @@
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const Matches = () => {
+const Main = () => {
   return (
     <SafeAreaView>
       <View>
-        <Text>Matches</Text>
+        <Text>Main</Text>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Matches;
+export default Main;
 
 const styles = StyleSheet.create({});

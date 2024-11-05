@@ -38,12 +38,14 @@
     "expo-linking": "~6.3.1",
     "expo-location": "^17.0.1",
     "expo-router": "~3.5.23",
+    "expo-secure-store": "~13.0.2",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
     "geolib": "^3.3.4",
     "lodash": "^4.17.21",
+    "lottie-react-native": "6.7.0",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -60,9 +62,7 @@
     "react-native-svg": "^15.7.1",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "~0.19.10",
-    "rn-fetch-blob": "^0.12.0",
-    "expo-secure-store": "~13.0.2",
-    "lottie-react-native": "6.7.0"
+    "rn-fetch-blob": "^0.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -42,7 +42,7 @@ const Images = () => {
         }
       }
 
-      const res = await fetch("http://192.168.1.78:3000/query/images", {
+      const res = await fetch("http://192.168.1.5:3000/query/images", {
         method: "POST",
         body: formData,
       });
@@ -73,7 +73,7 @@ const Images = () => {
     }
 
     const uploadImages = await addImages();
-    if (uploadImages) router.push("/finish");
+    if (uploadImages) router.push("/registerUser");
   }
 
   return (

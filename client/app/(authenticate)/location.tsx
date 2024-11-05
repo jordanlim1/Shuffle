@@ -77,9 +77,10 @@ const LocationScreen = () => {
   };
 
   const handleNext = () => {
-
-
-    saveRegistrationInfo("location", region);
+    saveRegistrationInfo("location", {
+      latitude: region.latitude,
+      longitude: region.longitude,
+    });
     saveRegistrationInfo("distance", value);
     router.push("/gender");
   };
@@ -150,7 +151,11 @@ const LocationScreen = () => {
             </Text>
           </View>
         )}
-        <TouchableOpacity style={styles.floatingButton} onPress={handleNext} disabled={loading}>
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={handleNext}
+          disabled={loading}
+        >
           <AntDesign name="arrowright" size={30} color="white" />
         </TouchableOpacity>
       </View>

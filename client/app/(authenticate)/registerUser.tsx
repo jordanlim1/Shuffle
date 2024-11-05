@@ -7,10 +7,11 @@ import {
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
-import { useFonts } from "expo-font";
 import { useFont } from "../reusable/useFont";
+import dayjs from "dayjs";
+import { router } from "expo-router";
 
-const finish = () => {
+const RegisterUser = () => {
   async function registerUser() {
     const name = await getResgistrationInfo("name");
     const email = await getResgistrationInfo("email");
@@ -40,10 +41,11 @@ const finish = () => {
       orientation: orientation,
       artists: artists,
       images: images,
+      created_at: dayjs().format("MM/DD/YYYY"),
     };
 
-
-    const res = await fetch("http://192.168.1.78:3000/auth/createProfile", {
+    // console.log(body);
+    const res = await fetch("http://192.168.1.5:3000/auth/createProfile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -51,7 +53,15 @@ const finish = () => {
 
     const data = await res.json();
 
-    if (res.ok) clearAllScreenData();
+    console.log("data", data);
+
+    if (res.ok) {
+      await SecureStore.setItemAsync("refresh_token", data.refreshToken);
+      await SecureStore.setItemAsync("access_token", data.accessToken);
+      await AsyncStorage.setItem("profileId", data.profileId);
+      clearAllScreenData();
+      router.push("/(tabs)");
+    }
   }
 
   const clearAllScreenData = async () => {
@@ -150,6 +160,6 @@ const finish = () => {
   );
 };
 
-export default finish;
+export default RegisterUser;
 
 const styles = StyleSheet.create({});
