@@ -67,10 +67,10 @@ const Images = () => {
   async function handleNext() {
     const uploadedImagesCount = images.filter((uri) => uri !== "").length;
 
-    if (uploadedImagesCount < 5) {
-      alert("Upload at least 5 photos to continue.");
-      return;
-    }
+    // if (uploadedImagesCount < 5) {
+    //   alert("Upload at least 5 photos to continue.");
+    //   return;
+    // }
 
     const uploadImages = await addImages();
     if (uploadImages) router.push("/registerUser");

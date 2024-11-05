@@ -44,7 +44,6 @@ const RegisterUser = () => {
       created_at: dayjs().format("MM/DD/YYYY"),
     };
 
-    // console.log(body);
     const res = await fetch("http://192.168.1.5:3000/auth/createProfile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -53,14 +52,12 @@ const RegisterUser = () => {
 
     const data = await res.json();
 
-    console.log("data", data);
-
     if (res.ok) {
       await SecureStore.setItemAsync("refresh_token", data.refreshToken);
       await SecureStore.setItemAsync("access_token", data.accessToken);
       await AsyncStorage.setItem("profileId", data.profileId);
       clearAllScreenData();
-      router.push("/(tabs)");
+      router.push("/(tabs)/main");
     }
   }
 

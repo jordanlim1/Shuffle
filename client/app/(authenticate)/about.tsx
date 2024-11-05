@@ -101,6 +101,7 @@ const personalInfo = () => {
     selectedDate: Date | undefined
   ) => {
     const currentDate = selectedDate || date;
+    console.log("hello", currentDate);
     setDate(currentDate);
 
     const formattedDate = dayjs(currentDate).format("YYYY-MM-DD");
@@ -110,7 +111,9 @@ const personalInfo = () => {
     const currentYear = dayjs().year();
     const birthYear = dayjs(currentDate).year();
     const calculatedAge = currentYear - birthYear;
+    console.log("calculated age", calculatedAge);
     setAge(calculatedAge);
+    console.log("age", age);
     setValidationErrors((prev) => ({ ...prev, age: false }));
   };
 

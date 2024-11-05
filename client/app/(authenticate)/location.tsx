@@ -35,7 +35,7 @@ const LocationScreen = () => {
   const [location, setLocation] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [value, setValue] = useState(10);
-
+  const [city, setCity] = useState("");
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -63,9 +63,14 @@ const LocationScreen = () => {
     try {
       let address = await Location.reverseGeocodeAsync({ latitude, longitude });
       const { city, district, region, country } = address[0];
-      district
-        ? setLocation(`${district}, ${region}, ${country}`)
-        : setLocation(`${city}, ${region}, ${country}`);
+
+      setCity(district! || city!);
+
+      const locationText = district
+        ? `${district}, ${region}, ${country}`
+        : `${city}, ${region}, ${country}`;
+
+      setLocation(locationText);
     } catch (error) {
       console.error("Error fetching location name:", error);
     }
@@ -80,6 +85,7 @@ const LocationScreen = () => {
     saveRegistrationInfo("location", {
       latitude: region.latitude,
       longitude: region.longitude,
+      city: city,
     });
     saveRegistrationInfo("distance", value);
     router.push("/gender");
