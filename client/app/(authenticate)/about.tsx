@@ -37,7 +37,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 const personalInfo = () => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [age, setAge] = useState<number | undefined>(undefined);
+  const [age, setAge] = useState<number>();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [birthdayPlaceholder, setBirthdayPlaceholder] = useState(
@@ -69,7 +69,6 @@ const personalInfo = () => {
     const storedName = await getResgistrationInfo("name");
     const storedEmail = await getResgistrationInfo("email");
 
-    console.log("stored", storedName, storedEmail);
     if (storedName) setName(storedName);
     if (storedEmail) setEmail(storedEmail);
   };
@@ -89,7 +88,8 @@ const personalInfo = () => {
         alert("Invalid email format.");
         return;
       }
-      const verified = await getStoredAccessToken();
+      const verified = await AsyncStorage.getItem("access_token");
+
       saveRegistrationInfo("name", name);
       saveRegistrationInfo("email", email);
       router.push(verified ? "/location" : "/password");
@@ -101,7 +101,6 @@ const personalInfo = () => {
     selectedDate: Date | undefined
   ) => {
     const currentDate = selectedDate || date;
-    console.log("hello", currentDate);
     setDate(currentDate);
 
     const formattedDate = dayjs(currentDate).format("YYYY-MM-DD");
@@ -110,35 +109,10 @@ const personalInfo = () => {
 
     const currentYear = dayjs().year();
     const birthYear = dayjs(currentDate).year();
-    const calculatedAge = currentYear - birthYear;
-    console.log("calculated age", calculatedAge);
+    const calculatedAge = Number(currentYear - birthYear);
     setAge(calculatedAge);
-    console.log("age", age);
     setValidationErrors((prev) => ({ ...prev, age: false }));
   };
-
-  async function getStoredAccessToken() {
-    const token = await AsyncStorage.getItem("access_token");
-    const timestamp = await AsyncStorage.getItem("token_timestamp");
-
-    if (token && timestamp) {
-      const tokenAge = new Date().getTime() - JSON.parse(timestamp);
-      const expiryTime = 30 * 60 * 60 * 1000;
-
-      if (tokenAge < expiryTime) {
-        return token;
-      } else {
-        // Token expired
-        await AsyncStorage.removeItem("access_token");
-        await AsyncStorage.removeItem("token_timestamp");
-        console.log("Access token has expired. Please re-authenticate.");
-        return null;
-      }
-    } else {
-      console.log("No token found. Please authenticate.");
-      return null;
-    }
-  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

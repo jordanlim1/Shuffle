@@ -125,10 +125,7 @@ export default function Login() {
     const response = await body.json();
 
     if (response.access_token) {
-      const timestamp = new Date().getTime(); // Current time in milliseconds
-
       await SecureStore.setItemAsync("access_token", response.access_token);
-      await AsyncStorage.setItem("token_timestamp", JSON.stringify(timestamp)); // Save timestamp
 
       getProfile(response.access_token);
     } else {

@@ -11,11 +11,10 @@ const Profile = () => {
 
   async function getProfileData() {
     try {
-      const profileId = await AsyncStorage.getItem("profileId");
-      //   console.log("profileId", profileId);
+      const profile_id = await AsyncStorage.getItem("profileId");
 
       const response = await fetch(
-        `http://192.168.1.5:3000/query/getProfile/${profileId}`
+        `http://192.168.1.5:3000/query/profile/${profile_id}`
       );
       const data = await response.json();
       console.log("data", data);
