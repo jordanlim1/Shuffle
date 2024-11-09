@@ -44,7 +44,7 @@ const RegisterUser = () => {
       created_at: dayjs().format("MM/DD/YYYY"),
     };
 
-    const res = await fetch("http://192.168.1.5:3000/auth/createProfile", {
+    const res = await fetch("http://192.168.1.75:3000/auth/createProfile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),

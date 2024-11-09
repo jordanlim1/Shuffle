@@ -16,7 +16,7 @@ const Images = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
     });
 
@@ -42,7 +42,7 @@ const Images = () => {
         }
       }
 
-      const res = await fetch("http://192.168.1.5:3000/query/images", {
+      const res = await fetch("http://192.168.1.75:3000/query/images", {
         method: "POST",
         body: formData,
       });

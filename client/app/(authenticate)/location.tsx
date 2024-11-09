@@ -14,16 +14,12 @@ import MapView, {
   Circle,
 } from "react-native-maps";
 import * as Location from "expo-location";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router } from "expo-router";
 import { saveRegistrationInfo } from "../registrationUtils";
-import { Animated } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Dots from "../reusable/Dots";
-import NextButton from "../reusable/NextButton";
 import Slider from "@react-native-community/slider";
-import { debounce } from "lodash";
 
 const LocationScreen = () => {
   const [region, setRegion] = useState<Region>({
