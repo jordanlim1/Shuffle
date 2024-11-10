@@ -4,7 +4,13 @@ import crypto from "crypto";
 import sharp from "sharp";
 const Profile = require("../Models/profile");
 
-import { S3Client, S3ClientConfig, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  S3ClientConfig,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
@@ -23,7 +29,11 @@ const s3 = new S3Client({
 } as S3ClientConfig);
 
 const queryController = {
-  addImages: async function (req: Request, res: Response, next: NextFunction) {
+  uploadImages: async function (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     const images: string[] = [];
 
     if (Array.isArray(req.files)) {
@@ -72,7 +82,20 @@ const queryController = {
         race,
         artists,
         images,
+        spotifyId,
       } = profile;
+
+      for (let i = 0; i < images.length; i++) {
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: images[i],
+        };
+
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+
+        images[i] = url; // Update the array element directly
+      }
 
       res.locals.profile = {
         name,
@@ -84,13 +107,14 @@ const queryController = {
         race,
         artists,
         images,
+        spotifyId,
       };
 
       return next();
     } catch (error) {
       return next({
-        message: "Error finding profile in getProfile middleware",
-        error: error,
+        log: `${error}, Error in finding profile`,
+        message: `${error}, Error in finding profile`,
       });
     }
   },
