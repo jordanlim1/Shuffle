@@ -12,10 +12,10 @@ import { ProfileCardProps } from "@/Interfaces/interfaces";
 import * as SecureStore from "expo-secure-store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SpotifyRemote from "@hoangvvo/react-native-spotify-remote";
 
 const ProfileCard = ({ profile }: ProfileCardProps) => {
   const [activeTab, setActiveTab] = useState("info");
-
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState(null);
 
@@ -28,7 +28,6 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
       );
 
       const data = await response.json();
-      console.log("token response", data);
       if (data) {
         await SecureStore.setItemAsync("access_token", data);
         return fetchPlaylists();
@@ -87,20 +86,31 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
     setSelectedPlaylistTracks(tracks);
   };
   return (
-    <View style={styles.cardContainer}>
+    <View
+      style={[
+        styles.cardContainer,
+        (activeTab === "artists" || activeTab === "playlists") &&
+          styles.darkBackground,
+      ]}
+    >
       {/* Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[styles.tabButton, activeTab === "info" && styles.activeTab]}
+          style={[
+            styles.tabButton,
+            activeTab === "info" && styles.activeTabInfo,
+          ]}
           onPress={() => {
             setActiveTab("info");
             setSelectedPlaylistTracks(null);
           }}
         >
           <Text
-            style={activeTab === "info" ? styles.activeTabText : styles.tabText}
+            style={
+              activeTab === "info" ? styles.activeTabTextInfo : styles.tabText
+            }
           >
-            Info
+            About
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -184,6 +194,7 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
               {!selectedPlaylistTracks ? (
                 <FlatList
                   data={playlists}
+                  scrollEnabled={false}
                   keyExtractor={(item) => item.playlistRef}
                   renderItem={({ item }) => (
                     <TouchableOpacity
@@ -203,6 +214,7 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
               ) : (
                 <FlatList
                   data={selectedPlaylistTracks}
+                  scrollEnabled={false}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item }) => (
                     <View style={styles.trackContainer}>
@@ -210,7 +222,7 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
                         source={{ uri: item.albumImage }}
                         style={styles.trackImage}
                       />
-                      <View>
+                      <View style={styles.songDetails}>
                         <Text style={styles.trackName}>{item.songName}</Text>
                         <Text style={styles.trackArtist}>
                           {item.artistName}
@@ -232,7 +244,7 @@ export default ProfileCard;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     borderRadius: 8,
     margin: 10,
     shadowColor: "#000",
@@ -241,8 +253,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     height: 300,
-    borderColor: "red",
+    borderColor: "#ff5a79",
     borderWidth: 2,
+    width: "95%",
   },
   infoContainer: {
     width: "100%",
@@ -250,7 +263,6 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
     width: "100%",
@@ -263,14 +275,24 @@ const styles = StyleSheet.create({
   },
   activeTab: {
     borderBottomWidth: 2,
+    borderBottomColor: "#1DB954",
+  },
+
+  activeTabInfo: {
+    borderBottomWidth: 2,
     borderBottomColor: "#ff5a79",
   },
+  activeTabText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1DB954",
+  },
   tabText: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#888",
   },
-  activeTabText: {
-    fontSize: 16,
+  activeTabTextInfo: {
+    fontSize: 20,
     fontWeight: "bold",
     color: "#ff5a79",
   },
@@ -279,32 +301,38 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
-    padding: 10,
+    padding: 20,
   },
+
   infoRow: {
     flexDirection: "row",
-    marginBottom: 15,
+    marginBottom: 10,
     paddingBottom: 8, // Adds spacing above the line
     borderBottomWidth: 1, // Creates the line underneath
     borderBottomColor: "#ccc", // Sets the line color to gray
     width: "100%",
+    marginTop: 5,
+    marginLeft: 10,
   },
   infoText: {
     fontSize: 16,
     color: "#333",
   },
   artistsContainer: {
-    marginTop: 5,
+    marginTop: 10,
+  },
+  darkBackground: {
+    backgroundColor: "#121212",
+    borderColor: "#1DB954",
+    borderWidth: 2,
   },
   artistRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    marginLeft: 15,
+    marginLeft: 5,
   },
-  iconContainer: {
-    marginRight: 15, // Adds spacing between the icon and the text
-  },
+
   artistIcon: {
     width: 60, // Adjust to desired icon size
     height: 60,
@@ -312,8 +340,8 @@ const styles = StyleSheet.create({
   },
   artistText: {
     fontSize: 24,
-    marginLeft: 15,
-    color: "#333",
+    marginLeft: 20,
+    color: "#FFFFFF",
   },
   playlistContainer: {
     flexDirection: "row",
@@ -324,32 +352,34 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 5,
-    marginRight: 15,
+    marginRight: 20,
   },
   playlistName: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: 20,
+    color: "#FFFFFF",
   },
   trackContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 15,
+    marginLeft: 5,
   },
   trackImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 5,
-    marginRight: 10,
+    width: 50,
+    height: 50,
+    marginRight: 15,
   },
   trackName: {
     fontSize: 16,
-    color: "#333",
+    color: "#FFFFFF",
   },
   trackArtist: {
     fontSize: 14,
-    color: "#888",
+    color: "#D2D2D2",
   },
-  //   tracks: {
-  //     backgroundColor: "black",
-  //   },
+  songDetails: {
+    display: "flex",
+    flexDirection: "column",
+    width: "80%",
+  },
 });

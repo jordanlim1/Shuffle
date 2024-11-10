@@ -59,7 +59,6 @@ const UserProfile = () => {
         `http://192.168.1.3:3000/query/profile/${profile_id}`
       );
       const data = await response.json();
-      console.log(data);
       setProfile(data);
     } catch (error) {
       console.log("Error in fetching profile data");
@@ -86,14 +85,15 @@ const UserProfile = () => {
   // };
 
   return (
-    <ScrollView>
-      <SafeAreaView style={styles.safeArea}>
+    <ScrollView style={styles.safeArea}>
+      <SafeAreaView>
         <View style={styles.profileName}>
           <Text style={styles.name}>{`${profile?.name.split(" ")[0]}`}</Text>
         </View>
 
-        <ProfileCard profile={profile!} />
-        {/* <View style={styles.imagesContainer}>
+        <View style={styles.profileContent}>
+          <ProfileCard profile={profile!} />
+          {/* <View style={styles.imagesContainer}>
           {profile?.images.map((image, idx) => (
             <View key={idx} style={styles.imageWrapper}>
               <Image
@@ -104,7 +104,7 @@ const UserProfile = () => {
             </View>
           ))}
         </View> */}
-        <View></View>
+        </View>
       </SafeAreaView>
     </ScrollView>
   );
@@ -115,6 +115,7 @@ export default UserProfile;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    height: "100%",
     backgroundColor: "#f9f9f9",
   },
   profileName: {
@@ -124,8 +125,12 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 20,
   },
+  profileContent: {
+    flex: 1,
+    alignItems: "center",
+  },
   name: {
-    paddingLeft: 25,
+    paddingLeft: 20,
     fontSize: 30,
     fontWeight: "bold",
   },

@@ -1,9 +1,6 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import {
-  getResgistrationInfo,
-  saveRegistrationInfo,
-} from "../reusable/registrationUtils";
+import { getResgistrationInfo } from "../reusable/registrationUtils";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
@@ -93,7 +90,6 @@ const RegisterUser = () => {
       for (const screenName of screens) {
         if (screenName === "refresh_token") {
           SecureStore.deleteItemAsync("refresh_token");
-          SecureStore.deleteItemAsync("access_token");
         }
         const key = `registration_progress_${screenName}`;
         await AsyncStorage.removeItem(key);
