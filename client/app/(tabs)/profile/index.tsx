@@ -77,10 +77,7 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 20,
   },
-  profileContent: {
-    flex: 1,
-    alignItems: "center",
-  },
+
   name: {
     paddingLeft: 20,
     fontSize: 30,

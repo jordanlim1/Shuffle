@@ -104,175 +104,200 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
     setSelectedPlaylistTracks(tracks);
   };
   return (
-    <View
-      style={[
-        styles.cardContainer,
-        (activeTab === "artists" || activeTab === "playlists") &&
-          styles.darkBackground,
-      ]}
-    >
-      {/* Tabs */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === "info" && styles.activeTabInfo,
-          ]}
-          onPress={() => {
-            setActiveTab("info");
-            setSelectedPlaylistTracks(null);
-          }}
-        >
-          <Text
-            style={
-              activeTab === "info" ? styles.activeTabTextInfo : styles.tabText
-            }
-          >
-            About
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === "artists" && styles.activeTab,
-          ]}
-          onPress={() => {
-            setActiveTab("artists");
-            setSelectedPlaylistTracks(null);
-          }}
-        >
-          <Text
-            style={
-              activeTab === "artists" ? styles.activeTabText : styles.tabText
-            }
-          >
-            Artists
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            activeTab === "playlists" && styles.activeTab,
-          ]}
-          onPress={() => {
-            setActiveTab("playlists");
-            setSelectedPlaylistTracks(null);
-            fetchPlaylists();
-          }}
-        >
-          <Text
-            style={
-              activeTab === "playlists" ? styles.activeTabText : styles.tabText
-            }
-          >
-            Playlists
-          </Text>
-        </TouchableOpacity>
-      </View>
+    <ScrollView>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.profileName}>
+          <Text style={styles.name}>{`${profile?.name.split(" ")[0]}`}</Text>
+        </View>
 
-      {/* Content */}
-      <ScrollView>
-        <View style={styles.contentContainer}>
-          {activeTab === "info" && (
-            <View style={styles.infoContainer}>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoText}>Age: {profile?.age}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoText}>
-                  Location: {profile?.location?.city}
-                </Text>
-              </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoText}>Height: {profile?.height}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoText}>Gender: {profile?.gender}</Text>
-              </View>
-              <View style={styles.infoRow}>
-                <Text style={styles.infoText}>Race: {profile?.race}</Text>
-              </View>
-            </View>
-          )}
-          {activeTab === "artists" && (
-            <View style={styles.artistsContainer}>
-              {profile?.artists.map((artist, idx) => (
-                <View key={idx} style={styles.artistRow}>
-                  <Image
-                    source={{ uri: artist.icon }}
-                    style={styles.artistIcon}
-                  />
-                  <Text style={styles.artistText}>{artist.name}</Text>
+        <View
+          style={[
+            styles.cardContainer,
+            (activeTab === "artists" || activeTab === "playlists") &&
+              styles.darkBackground,
+          ]}
+        >
+          {/* Tabs */}
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "info" && styles.activeTabInfo,
+              ]}
+              onPress={() => {
+                setActiveTab("info");
+                setSelectedPlaylistTracks(null);
+              }}
+            >
+              <Text
+                style={
+                  activeTab === "info"
+                    ? styles.activeTabTextInfo
+                    : styles.tabText
+                }
+              >
+                About
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "artists" && styles.activeTab,
+              ]}
+              onPress={() => {
+                setActiveTab("artists");
+                setSelectedPlaylistTracks(null);
+              }}
+            >
+              <Text
+                style={
+                  activeTab === "artists"
+                    ? styles.activeTabText
+                    : styles.tabText
+                }
+              >
+                Artists
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                activeTab === "playlists" && styles.activeTab,
+              ]}
+              onPress={() => {
+                setActiveTab("playlists");
+                setSelectedPlaylistTracks(null);
+                fetchPlaylists();
+              }}
+            >
+              <Text
+                style={
+                  activeTab === "playlists"
+                    ? styles.activeTabText
+                    : styles.tabText
+                }
+              >
+                Playlists
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Content */}
+          <ScrollView>
+            <View style={styles.contentContainer}>
+              {activeTab === "info" && (
+                <View style={styles.infoContainer}>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoText}>Age: {profile?.age}</Text>
+                  </View>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoText}>
+                      Location: {profile?.location?.city}
+                    </Text>
+                  </View>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoText}>
+                      Height: {profile?.height}
+                    </Text>
+                  </View>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoText}>
+                      Gender: {profile?.gender}
+                    </Text>
+                  </View>
+                  <View style={styles.infoRow}>
+                    <Text style={styles.infoText}>Race: {profile?.race}</Text>
+                  </View>
                 </View>
-              ))}
-            </View>
-          )}
-          {activeTab === "playlists" && (
-            <View>
-              {!selectedPlaylistTracks ? (
-                <FlatList
-                  data={playlists}
-                  scrollEnabled={false}
-                  keyExtractor={(item) => item.playlistRef}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      style={styles.playlistContainer}
-                      onPress={() => fetchPlaylistTracks(item.playlistRef)}
-                    >
+              )}
+              {activeTab === "artists" && (
+                <View style={styles.artistsContainer}>
+                  {profile?.artists.map((artist, idx) => (
+                    <View key={idx} style={styles.artistRow}>
                       <Image
-                        source={{ uri: item.playlistImage }}
-                        style={styles.playlistImage}
+                        source={{ uri: artist.icon }}
+                        style={styles.artistIcon}
                       />
-                      <Text style={styles.playlistName}>
-                        {item.playlistName}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                />
-              ) : (
+                      <Text style={styles.artistText}>{artist.name}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+              {activeTab === "playlists" && (
                 <View>
-                  <TouchableOpacity
-                    onPress={() => setSelectedPlaylistTracks(null)}
-                  >
-                    <Ionicons
-                      name="return-down-back-sharp"
-                      size={36}
-                      color="white"
-                      style={{ marginBottom: 20 }}
-                    />
-                  </TouchableOpacity>
-                  <FlatList
-                    data={selectedPlaylistTracks}
-                    scrollEnabled={false}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                      <View style={styles.trackContainer}>
-                        <Image
-                          source={{ uri: item.albumImage }}
-                          style={styles.trackImage}
-                        />
-                        <View style={styles.songDetails}>
-                          <Text style={styles.trackName}>{item.songName}</Text>
-                          <Text style={styles.trackArtist}>
-                            {item.artistName}
+                  {!selectedPlaylistTracks ? (
+                    <FlatList
+                      data={playlists}
+                      scrollEnabled={false}
+                      keyExtractor={(item) => item.playlistRef}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          style={styles.playlistContainer}
+                          onPress={() => fetchPlaylistTracks(item.playlistRef)}
+                        >
+                          <Image
+                            source={{ uri: item.playlistImage }}
+                            style={styles.playlistImage}
+                          />
+                          <Text style={styles.playlistName}>
+                            {item.playlistName}
                           </Text>
-                        </View>
-                      </View>
-                    )}
-                  />
+                        </TouchableOpacity>
+                      )}
+                    />
+                  ) : (
+                    <View>
+                      <TouchableOpacity
+                        onPress={() => setSelectedPlaylistTracks(null)}
+                      >
+                        <Ionicons
+                          name="return-down-back-sharp"
+                          size={36}
+                          color="white"
+                          style={{ marginBottom: 20 }}
+                        />
+                      </TouchableOpacity>
+                      <FlatList
+                        data={selectedPlaylistTracks}
+                        scrollEnabled={false}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                          <View style={styles.trackContainer}>
+                            <Image
+                              source={{ uri: item.albumImage }}
+                              style={styles.trackImage}
+                            />
+                            <View style={styles.songDetails}>
+                              <Text style={styles.trackName}>
+                                {item.songName}
+                              </Text>
+                              <Text style={styles.trackArtist}>
+                                {item.artistName}
+                              </Text>
+                            </View>
+                          </View>
+                        )}
+                      />
+                    </View>
+                  )}
                 </View>
               )}
             </View>
-          )}
+          </ScrollView>
         </View>
-      </ScrollView>
-    </View>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
 export default ProfileCard;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    height: "100%",
+    backgroundColor: "#f9f9f9",
+  },
   cardContainer: {
     backgroundColor: "white",
     borderRadius: 8,
@@ -410,5 +435,18 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     width: "80%",
+  },
+  profileName: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    width: "100%",
+    marginTop: 20,
+  },
+
+  name: {
+    paddingLeft: 20,
+    fontSize: 30,
+    fontWeight: "bold",
   },
 });
