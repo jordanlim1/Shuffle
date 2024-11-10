@@ -2,17 +2,25 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { router } from "expo-router";
-import { saveRegistrationInfo } from "../registrationUtils";
+import { saveRegistrationInfo } from "./registrationUtils";
 
-const NextButton = ({state, route, screenName} : {state: any, route: string, screenName: string}) => {
-    async function handleNext() {
-        if(!state){
-            alert("Please select an option.")
-            return
-        }
-        await saveRegistrationInfo(screenName, state)
-        router.push(`/${route}`);
-      }
+const NextButton = ({
+  state,
+  route,
+  screenName,
+}: {
+  state: any;
+  route: string;
+  screenName: string;
+}) => {
+  async function handleNext() {
+    if (!state) {
+      alert("Please select an option.");
+      return;
+    }
+    await saveRegistrationInfo(screenName, state);
+    router.push(`/${route}`);
+  }
   return (
     <TouchableOpacity style={styles.floatingButton} onPress={handleNext}>
       <AntDesign name="arrowright" size={30} color="white" />

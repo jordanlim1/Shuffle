@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
 import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
-import { saveRegistrationInfo } from "../registrationUtils";
+import { saveRegistrationInfo } from "../reusable/registrationUtils";
 import Dots from "../reusable/Dots";
 import NextButton from "../reusable/NextButton";
 

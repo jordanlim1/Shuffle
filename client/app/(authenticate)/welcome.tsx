@@ -66,14 +66,13 @@ export default function Welcome() {
         </Animated.View>
         <Animated.Text style={[styles.welcomeText, { opacity: textOpacity }]}>
           Welcome to Shuffle
-          
         </Animated.Text>
-   
+
         <Animated.View
           style={[styles.lottieContainer, { opacity: lottieOpacity }]}
         >
           <LottieView
-            source={require("../../assets/music.json")}
+            source={require("../../assets/animations/music.json")}
             style={styles.lottie}
             autoPlay
             loop={false}

@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import {
   saveRegistrationInfo,
   getResgistrationInfo,
-} from "../registrationUtils";
+} from "../reusable/registrationUtils";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Fontisto from "@expo/vector-icons/Fontisto";

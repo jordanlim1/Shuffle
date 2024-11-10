@@ -3,7 +3,7 @@ import React from "react";
 import {
   getResgistrationInfo,
   saveRegistrationInfo,
-} from "../registrationUtils";
+} from "../reusable/registrationUtils";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
@@ -25,6 +25,8 @@ const RegisterUser = () => {
     const preference = await getResgistrationInfo("preference");
     const orientation = await getResgistrationInfo("orientation");
     const artists = await getResgistrationInfo("artists");
+    const user_id = await getResgistrationInfo("user_id");
+
     const images = await getResgistrationInfo("images");
 
     const body = {
@@ -37,6 +39,7 @@ const RegisterUser = () => {
       preference: preference,
       height: height,
       race: race,
+      user_id: user_id,
       gender: gender,
       orientation: orientation,
       artists: artists,
@@ -77,6 +80,7 @@ const RegisterUser = () => {
         "orientation",
         "race",
         "images",
+        "user_id",
       ];
       // Loop through each screen and remove its data from AsyncStorage
       for (const screenName of screens) {
@@ -124,7 +128,7 @@ const RegisterUser = () => {
 
       <View>
         <LottieView
-          source={require("../../assets/love.json")}
+          source={require("../../assets/animations/love.json")}
           style={{
             height: 260,
             width: 300,

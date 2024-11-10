@@ -2,7 +2,7 @@ import { Button, StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { saveRegistrationInfo } from "../registrationUtils";
+import { saveRegistrationInfo } from "../reusable/registrationUtils";
 import Dots from "../reusable/Dots";
 import Feather from "@expo/vector-icons/Feather";
 import { TouchableOpacity } from "react-native";
@@ -16,10 +16,10 @@ const Images = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [1, 1],
       quality: 1,
     });
 
+    console.log(result);
     if (!result.canceled) {
       const newImages = [...images];
       newImages[index] = result.assets[0].uri;
@@ -67,10 +67,10 @@ const Images = () => {
   async function handleNext() {
     const uploadedImagesCount = images.filter((uri) => uri !== "").length;
 
-    // if (uploadedImagesCount < 5) {
-    //   alert("Upload at least 5 photos to continue.");
-    //   return;
-    // }
+    if (uploadedImagesCount < 5) {
+      alert("Upload at least 5 photos to continue.");
+      return;
+    }
 
     const uploadImages = await addImages();
     if (uploadImages) router.push("/registerUser");

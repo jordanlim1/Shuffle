@@ -16,7 +16,7 @@ import MapView, {
 import * as Location from "expo-location";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router } from "expo-router";
-import { saveRegistrationInfo } from "../registrationUtils";
+import { saveRegistrationInfo } from "../reusable/registrationUtils";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Dots from "../reusable/Dots";
 import Slider from "@react-native-community/slider";

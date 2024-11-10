@@ -15,7 +15,7 @@ import CryptoJS from "crypto-js";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
-import { saveRegistrationInfo } from "../registrationUtils";
+import { saveRegistrationInfo } from "../reusable/registrationUtils";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as SecureStore from "expo-secure-store";
 
@@ -144,6 +144,15 @@ export default function Login() {
         }
       );
 
+      const playlistData = await fetch(
+        "https://api.spotify.com/v1/me/playlists?limit=5",
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+          },
+        }
+      );
+
       const credentialsData = await fetch("https://api.spotify.com/v1/me", {
         headers: {
           Authorization: "Bearer " + accessToken,
@@ -165,9 +174,12 @@ export default function Login() {
 
       const artists = await artistsData.json();
       const credentials = await credentialsData.json();
+      const playlists = await playlistData.json();
 
+      // console.log(playlists);
       await saveRegistrationInfo("name", credentials.display_name);
       await saveRegistrationInfo("email", credentials.email);
+      await saveRegistrationInfo("user_id", credentials.id);
 
       const topArtists = [];
 
