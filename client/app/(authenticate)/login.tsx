@@ -126,7 +126,9 @@ export default function Login() {
 
     if (response.access_token) {
       await SecureStore.setItemAsync("access_token", response.access_token);
+      await SecureStore.setItemAsync("refresh_token", response.refresh_token);
 
+      console.log(response.refresh_token);
       getProfile(response.access_token);
     } else {
       throw new Error("Failed to retrieve access token");
@@ -137,15 +139,6 @@ export default function Login() {
     try {
       const artistsData = await fetch(
         "https://api.spotify.com/v1/me/top/artists?limit=5",
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
-
-      const playlistData = await fetch(
-        "https://api.spotify.com/v1/me/playlists?limit=5",
         {
           headers: {
             Authorization: "Bearer " + accessToken,
@@ -174,12 +167,10 @@ export default function Login() {
 
       const artists = await artistsData.json();
       const credentials = await credentialsData.json();
-      const playlists = await playlistData.json();
 
-      // console.log(playlists);
       await saveRegistrationInfo("name", credentials.display_name);
       await saveRegistrationInfo("email", credentials.email);
-      await saveRegistrationInfo("user_id", credentials.id);
+      await saveRegistrationInfo("spotify_id", credentials.id);
 
       const topArtists = [];
 

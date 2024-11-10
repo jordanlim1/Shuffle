@@ -13,7 +13,6 @@ const UserProfile = () => {
 
   useEffect(() => {
     getProfileData();
-    mockFetch();
   }, []);
 
   async function mockFetch() {
@@ -57,10 +56,10 @@ const UserProfile = () => {
       const profile_id = await AsyncStorage.getItem("profileId");
 
       const response = await fetch(
-        `http://192.168.1.75:3000/query/profile/${profile_id}`
+        `http://192.168.1.3:3000/query/profile/${profile_id}`
       );
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
       setProfile(data);
     } catch (error) {
       console.log("Error in fetching profile data");

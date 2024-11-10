@@ -13,54 +13,59 @@ import { router } from "expo-router";
 
 const RegisterUser = () => {
   async function registerUser() {
-    const name = await getResgistrationInfo("name");
-    const email = await getResgistrationInfo("email");
-    const age = await getResgistrationInfo("age");
-    const gender = await getResgistrationInfo("gender");
-    const race = await getResgistrationInfo("race");
-    const password = await SecureStore.getItemAsync("password");
-    const height = await getResgistrationInfo("height");
-    const location = await getResgistrationInfo("location");
-    const distance = await getResgistrationInfo("distance");
-    const preference = await getResgistrationInfo("preference");
-    const orientation = await getResgistrationInfo("orientation");
-    const artists = await getResgistrationInfo("artists");
-    const user_id = await getResgistrationInfo("user_id");
+    try {
+      const name = await getResgistrationInfo("name");
+      const email = await getResgistrationInfo("email");
+      const age = await getResgistrationInfo("age");
+      const gender = await getResgistrationInfo("gender");
+      const race = await getResgistrationInfo("race");
+      const password = await SecureStore.getItemAsync("password");
+      const refreshToken = await SecureStore.getItemAsync("refresh_token");
 
-    const images = await getResgistrationInfo("images");
+      const height = await getResgistrationInfo("height");
+      const location = await getResgistrationInfo("location");
+      const distance = await getResgistrationInfo("distance");
+      const preference = await getResgistrationInfo("preference");
+      const orientation = await getResgistrationInfo("orientation");
+      const artists = await getResgistrationInfo("artists");
+      const spotifyId = await getResgistrationInfo("spotify_id");
 
-    const body = {
-      name: name,
-      email: email,
-      password: password,
-      age: age,
-      location: location,
-      distance: distance,
-      preference: preference,
-      height: height,
-      race: race,
-      user_id: user_id,
-      gender: gender,
-      orientation: orientation,
-      artists: artists,
-      images: images,
-      created_at: dayjs().format("MM/DD/YYYY"),
-    };
+      const images = await getResgistrationInfo("images");
 
-    const res = await fetch("http://192.168.1.75:3000/auth/createProfile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+      const body = {
+        name: name,
+        email: email,
+        password: password,
+        age: age,
+        location: location,
+        distance: distance,
+        preference: preference,
+        height: height,
+        race: race,
+        spotifyId: spotifyId,
+        gender: gender,
+        orientation: orientation,
+        artists: artists,
+        images: images,
+        refreshToken: refreshToken,
+        created_at: dayjs().format("MM/DD/YYYY"),
+      };
 
-    const data = await res.json();
+      const res = await fetch("http://192.168.1.3:3000/auth/createProfile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    if (res.ok) {
-      await SecureStore.setItemAsync("refresh_token", data.refreshToken);
-      await SecureStore.setItemAsync("access_token", data.accessToken);
-      await AsyncStorage.setItem("profileId", data.profileId);
-      clearAllScreenData();
-      router.push("/(tabs)/main");
+      const data = await res.json();
+
+      if (res.ok) {
+        await AsyncStorage.setItem("profileId", data.profileId);
+        clearAllScreenData();
+        router.push("/(tabs)/main");
+      }
+    } catch (error) {
+      console.log(error, "Error in registering user.");
     }
   }
 
@@ -81,11 +86,14 @@ const RegisterUser = () => {
         "race",
         "images",
         "user_id",
+        "refresh_token",
+        "access_token",
       ];
       // Loop through each screen and remove its data from AsyncStorage
       for (const screenName of screens) {
-        if (screenName === "password") {
-          SecureStore.deleteItemAsync("password");
+        if (screenName === "refresh_token") {
+          SecureStore.deleteItemAsync("refresh_token");
+          SecureStore.deleteItemAsync("access_token");
         }
         const key = `registration_progress_${screenName}`;
         await AsyncStorage.removeItem(key);

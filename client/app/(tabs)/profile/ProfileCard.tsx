@@ -11,6 +11,7 @@ import {
 import { ProfileCardProps } from "@/Interfaces/interfaces";
 import * as SecureStore from "expo-secure-store";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProfileCard = ({ profile }: ProfileCardProps) => {
   const [activeTab, setActiveTab] = useState("info");
@@ -18,18 +19,43 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState(null);
 
-  // Fetch user playlists
-  useEffect(() => {
-    async function fetchPlaylists() {
-      const access_token = await SecureStore.getItemAsync("access_token");
+  async function refreshToken() {
+    try {
+      const profile_id = await AsyncStorage.getItem("profileId");
+
       const response = await fetch(
-        "https://api.spotify.com/v1/users/1227838293/playlists?limit=4",
+        `http://192.168.1.3:3000/auth/refresh-token/${profile_id}`
+      );
+
+      const data = await response.json();
+      console.log("token response", data);
+      if (data) {
+        await SecureStore.setItemAsync("access_token", data);
+        return fetchPlaylists();
+      }
+    } catch (err) {
+      console.log(err, "Error refreshing token.");
+    }
+  }
+
+  async function fetchPlaylists() {
+    try {
+      const access_token = await SecureStore.getItemAsync("access_token");
+
+      const response = await fetch(
+        `https://api.spotify.com/v1/users/${profile.spotifyId}/playlists?limit=4`,
         {
           headers: {
             Authorization: "Bearer " + access_token,
           },
         }
       );
+
+      if (response.status === 401) {
+        // Token has expired; attempt to refresh it
+        await refreshToken();
+      }
+
       const data = await response.json();
 
       const albumInfo = data.items.map((playlist) => ({
@@ -38,10 +64,10 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
         playlistImage: playlist.images[0].url,
       }));
       setPlaylists(albumInfo);
+    } catch (error) {
+      console.log("Error fetching playlists, token expired.", error);
     }
-
-    fetchPlaylists();
-  }, []);
+  }
 
   // Fetch tracks from the selected playlist
   const fetchPlaylistTracks = async (playlistRef: string) => {
@@ -103,6 +129,7 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
           onPress={() => {
             setActiveTab("playlists");
             setSelectedPlaylistTracks(null);
+            fetchPlaylists();
           }}
         >
           <Text

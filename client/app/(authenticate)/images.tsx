@@ -19,7 +19,6 @@ const Images = () => {
       quality: 1,
     });
 
-    console.log(result);
     if (!result.canceled) {
       const newImages = [...images];
       newImages[index] = result.assets[0].uri;
@@ -42,7 +41,7 @@ const Images = () => {
         }
       }
 
-      const res = await fetch("http://192.168.1.75:3000/query/images", {
+      const res = await fetch("http://192.168.1.3:3000/query/images", {
         method: "POST",
         body: formData,
       });
@@ -67,10 +66,10 @@ const Images = () => {
   async function handleNext() {
     const uploadedImagesCount = images.filter((uri) => uri !== "").length;
 
-    if (uploadedImagesCount < 5) {
-      alert("Upload at least 5 photos to continue.");
-      return;
-    }
+    // if (uploadedImagesCount < 5) {
+    //   alert("Upload at least 5 photos to continue.");
+    //   return;
+    // }
 
     const uploadImages = await addImages();
     if (uploadImages) router.push("/registerUser");
