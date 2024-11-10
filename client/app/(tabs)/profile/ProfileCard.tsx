@@ -12,7 +12,7 @@ import { ProfileCardProps } from "@/Interfaces/interfaces";
 import * as SecureStore from "expo-secure-store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SpotifyRemote from "@hoangvvo/react-native-spotify-remote";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const ProfileCard = ({ profile }: ProfileCardProps) => {
   const [activeTab, setActiveTab] = useState("info");
@@ -212,25 +212,37 @@ const ProfileCard = ({ profile }: ProfileCardProps) => {
                   )}
                 />
               ) : (
-                <FlatList
-                  data={selectedPlaylistTracks}
-                  scrollEnabled={false}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
-                    <View style={styles.trackContainer}>
-                      <Image
-                        source={{ uri: item.albumImage }}
-                        style={styles.trackImage}
-                      />
-                      <View style={styles.songDetails}>
-                        <Text style={styles.trackName}>{item.songName}</Text>
-                        <Text style={styles.trackArtist}>
-                          {item.artistName}
-                        </Text>
+                <View>
+                  <TouchableOpacity
+                    onPress={() => setSelectedPlaylistTracks(null)}
+                  >
+                    <Ionicons
+                      name="return-down-back-sharp"
+                      size={36}
+                      color="white"
+                      style={{ marginBottom: 20 }}
+                    />
+                  </TouchableOpacity>
+                  <FlatList
+                    data={selectedPlaylistTracks}
+                    scrollEnabled={false}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <View style={styles.trackContainer}>
+                        <Image
+                          source={{ uri: item.albumImage }}
+                          style={styles.trackImage}
+                        />
+                        <View style={styles.songDetails}>
+                          <Text style={styles.trackName}>{item.songName}</Text>
+                          <Text style={styles.trackArtist}>
+                            {item.artistName}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                  )}
-                />
+                    )}
+                  />
+                </View>
               )}
             </View>
           )}
@@ -351,7 +363,6 @@ const styles = StyleSheet.create({
   playlistImage: {
     width: 60,
     height: 60,
-    borderRadius: 5,
     marginRight: 20,
   },
   playlistName: {
