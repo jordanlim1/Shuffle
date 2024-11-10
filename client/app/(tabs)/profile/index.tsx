@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-import ProfileCard from "./ProfileCard";
+import ProfileCard from "../../Reusable/ProfileCard";
 import { Profile } from "@/Interfaces/interfaces";
 
 const UserProfile = () => {

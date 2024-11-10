@@ -15,7 +15,7 @@ import CryptoJS from "crypto-js";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
-import { saveRegistrationInfo } from "../reusable/registrationUtils";
+import { saveRegistrationInfo } from "../Reusable/registrationUtils";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import * as SecureStore from "expo-secure-store";
 

@@ -13,7 +13,7 @@ import { router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
-import Dots from "../reusable/Dots";
+import Dots from "../Reusable/Dots";
 import * as SecureStore from "expo-secure-store";
 import { TouchableWithoutFeedback } from "react-native";
 

@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import {
   saveRegistrationInfo,
   getResgistrationInfo,
-} from "../reusable/registrationUtils";
+} from "../Reusable/registrationUtils";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Fontisto from "@expo/vector-icons/Fontisto";
@@ -30,8 +30,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Slider from "@react-native-community/slider";
 import { debounce } from "lodash";
 import * as Location from "expo-location";
-import Dots from "../reusable/Dots";
-import NextButton from "../reusable/NextButton";
+import Dots from "../Reusable/Dots";
+import NextButton from "../Reusable/NextButton";
 import { Picker } from "@react-native-picker/picker";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 const personalInfo = () => {

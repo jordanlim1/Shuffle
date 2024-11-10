@@ -2,8 +2,8 @@ import { Button, StyleSheet, Text, View, Image, Pressable } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
-import { saveRegistrationInfo } from "../reusable/registrationUtils";
-import Dots from "../reusable/Dots";
+import { saveRegistrationInfo } from "../Reusable/registrationUtils";
+import Dots from "../Reusable/Dots";
 import Feather from "@expo/vector-icons/Feather";
 import { TouchableOpacity } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -29,28 +29,41 @@ const Images = () => {
   const addImages = async () => {
     try {
       const formData = new FormData();
-      for (const uri of images) {
+
+      const imagePromises = images.map(async (uri) => {
         if (uri) {
           const response = await fetch(uri);
-          const blob = await response.blob();
           formData.append("images", {
             uri: uri,
             type: "image/jpeg",
             name: `photo-${Date.now()}.jpg`,
           } as any);
         }
-      }
+      });
 
-      const res = await fetch("http://192.168.1.3:3000/query/images", {
+      await Promise.all(imagePromises);
+
+      // for (const uri of images) {
+      //   if (uri) {
+      //     const response = await fetch(uri);
+      //     const blob = await response.blob();
+      //     formData.append("images", {
+      //       uri: uri,
+      //       type: "image/jpeg",
+      //       name: `photo-${Date.now()}.jpg`,
+      //     } as any);
+      //   }
+      // }
+
+      const response = await fetch("http://192.168.1.3:3000/query/images", {
         method: "POST",
         body: formData,
       });
 
-      const data = await res.json();
-
-      if (data) {
+      if (response.ok) {
+        const data = await response.json();
         await saveRegistrationInfo("images", data);
-        return res.ok;
+        return true;
       }
     } catch (error) {
       console.error("Error uploading image:", error);

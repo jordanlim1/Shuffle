@@ -3,13 +3,13 @@ import { View, Text, Animated, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
-import { useFont } from "../reusable/useFont";
+import { useFont } from "../Reusable/useFont";
 
 const words = ["Let's", "Finish", "Your", "Profile!"];
 
 const FillerScreen = () => {
   const navigation = useNavigation();
-  const [animatedValues] = useState(words.map(() => new Animated.Value(0))); // Initialize with opacity 0
+  const [animatedValues] = useState(words.map(() => new Animated.Value(0)));
 
   useEffect(() => {
     const fadeInAnimations = words.map((_, i) =>
@@ -29,8 +29,8 @@ const FillerScreen = () => {
     );
 
     Animated.sequence([
-      Animated.stagger(300, fadeInAnimations), // Stagger the fade-in animations
-      Animated.stagger(100, fadeOutAnimations), // Stagger the fade-out animations
+      Animated.stagger(300, fadeInAnimations),
+      Animated.stagger(100, fadeOutAnimations),
     ]).start(() => {
       router.push("/about");
     });
@@ -43,7 +43,7 @@ const FillerScreen = () => {
         {words.map((word, index) => (
           <Animated.Text
             key={index}
-            style={[styles.word, { opacity: animatedValues[index] }]} // Bind opacity to animation value
+            style={[styles.word, { opacity: animatedValues[index] }]}
           >
             {word}
           </Animated.Text>

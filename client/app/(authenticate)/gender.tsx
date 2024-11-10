@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Dots from "../reusable/Dots";
-import NextButton from "../reusable/NextButton";
+import Dots from "../Reusable/Dots";
+import NextButton from "../Reusable/NextButton";
 const Gender = () => {
   const [gender, setGender] = useState("");
 
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   genderButton: {
     alignItems: "center",
     justifyContent: "center",
-    width: "45%", // Allows two buttons per row with some spacing
+    width: "45%", 
     height: 120,
     backgroundColor: "#fff",
     borderRadius: 10,

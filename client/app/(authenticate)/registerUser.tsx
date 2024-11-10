@@ -1,10 +1,10 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { getResgistrationInfo } from "../reusable/registrationUtils";
+import { getResgistrationInfo } from "../Reusable/registrationUtils";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LottieView from "lottie-react-native";
-import { useFont } from "../reusable/useFont";
+import { useFont } from "../Reusable/useFont";
 import dayjs from "dayjs";
 import { router } from "expo-router";
 

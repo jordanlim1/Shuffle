@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, View, Text, StyleSheet, Animated } from "react-native";
 import Checkbox from "expo-checkbox";
-import Dots from "../reusable/Dots";
-import NextButton from "../reusable/NextButton";
+import Dots from "../Reusable/Dots";
+import NextButton from "../Reusable/NextButton";
 
 const Orientation = () => {
   const options = [

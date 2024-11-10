@@ -4,8 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Dots from "../reusable/Dots";
-import NextButton from "../reusable/NextButton";
+import Dots from "../Reusable/Dots";
+import NextButton from "../Reusable/NextButton";
 
 const Preference = () => {
   const [preferences, setPreferences] = useState("");

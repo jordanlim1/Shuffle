@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
 import Checkbox from "expo-checkbox";
 import { router } from "expo-router";
-import { saveRegistrationInfo } from "../reusable/registrationUtils";
-import Dots from "../reusable/Dots";
-import NextButton from "../reusable/NextButton";
+import { saveRegistrationInfo } from "../Reusable/registrationUtils";
+import Dots from "../Reusable/Dots";
+import NextButton from "../Reusable/NextButton";
 
 const Race = () => {
   const options = [

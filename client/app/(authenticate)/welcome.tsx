@@ -7,7 +7,7 @@ import {
   Image,
   Animated,
 } from "react-native";
-import { useFont } from "../reusable/useFont";
+import { useFont } from "../Reusable/useFont";
 import LottieView from "lottie-react-native";
 import { router } from "expo-router";
 

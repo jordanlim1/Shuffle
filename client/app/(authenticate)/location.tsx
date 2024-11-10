@@ -16,9 +16,9 @@ import MapView, {
 import * as Location from "expo-location";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { router } from "expo-router";
-import { saveRegistrationInfo } from "../reusable/registrationUtils";
+import { saveRegistrationInfo } from "../Reusable/registrationUtils";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Dots from "../reusable/Dots";
+import Dots from "../Reusable/Dots";
 import Slider from "@react-native-community/slider";
 
 const LocationScreen = () => {
