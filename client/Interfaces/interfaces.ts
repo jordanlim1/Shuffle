@@ -14,6 +14,6 @@ export interface Profile {
   race: string;
 }
 
-export interface ProfileCardProps{
-    profile: Profile
+export interface ProfileCardProps {
+  profileId: string;
 }

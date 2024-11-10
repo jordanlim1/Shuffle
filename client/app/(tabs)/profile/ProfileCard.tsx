@@ -8,16 +8,34 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import { ProfileCardProps } from "@/Interfaces/interfaces";
+import { ProfileCardProps, Profile } from "@/Interfaces/interfaces";
 import * as SecureStore from "expo-secure-store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const ProfileCard = ({ profile }: ProfileCardProps) => {
+const ProfileCard = ({ profileId }: ProfileCardProps) => {
   const [activeTab, setActiveTab] = useState("info");
   const [playlists, setPlaylists] = useState([]);
+  const [profile, setProfile] = useState<Profile>();
   const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState(null);
+
+  useEffect(() => {
+    getProfileData();
+  }, []);
+
+  async function getProfileData() {
+    try {
+      const response = await fetch(
+        `http://192.168.1.3:3000/query/profile/${profileId}`
+      );
+      const data = await response.json();
+      setProfile(data);
+    } catch (error) {
+      console.log("Error in fetching profile data");
+      return;
+    }
+  }
 
   async function refreshToken() {
     try {

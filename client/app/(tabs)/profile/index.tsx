@@ -10,61 +10,13 @@ import { Profile } from "@/Interfaces/interfaces";
 const UserProfile = () => {
   const [profile, setProfile] = useState<Profile>();
   const [location, setLocation] = useState("");
-
+  const [profileId, setProfileId] = useState("");
   useEffect(() => {
-    getProfileData();
-  }, []);
-
-  async function mockFetch() {
-    const access_token = await SecureStore.getItemAsync("access_token");
-    const response = await fetch(
-      "https://api.spotify.com/v1/users/1227838293/playlists?limit=4",
-      {
-        headers: {
-          Authorization: "Bearer " + access_token,
-        },
-      }
-    );
-    const data = await response.json();
-    // console.log(data.items[0]);
-
-    const albumInfo = data.items.map((playlist, idx) => ({
-      playlistName: playlist.name,
-      playlistRef: playlist.href,
-      playlistImage: playlist.images[0].url,
-    }));
-
-    console.log(albumInfo);
-    const response2 = await fetch(`${data.items[0].tracks.href}`, {
-      headers: {
-        Authorization: "Bearer " + access_token,
-      },
-    });
-    const data2 = await response2.json();
-
-    const simplifiedTracks = data2.items.map((item) => ({
-      songName: item.track.name,
-      artistName: item.track.artists.map((artist) => artist.name).join(", "),
-      albumImage: item.track.album.images[2]?.url, // Gets the first available image URL
-    }));
-
-    // console.log(simplifiedTracks);
-  }
-
-  async function getProfileData() {
-    try {
+    async () => {
       const profile_id = await AsyncStorage.getItem("profileId");
-
-      const response = await fetch(
-        `http://192.168.1.3:3000/query/profile/${profile_id}`
-      );
-      const data = await response.json();
-      setProfile(data);
-    } catch (error) {
-      console.log("Error in fetching profile data");
-      return;
-    }
-  }
+      setProfileId(profile_id!);
+    };
+  }, []);
 
   // const getLocationName = async (
   //   latitude: number,
@@ -92,7 +44,7 @@ const UserProfile = () => {
         </View>
 
         <View style={styles.profileContent}>
-          <ProfileCard profile={profile!} />
+          <ProfileCard profileId={profileId!} />
           {/* <View style={styles.imagesContainer}>
           {profile?.images.map((image, idx) => (
             <View key={idx} style={styles.imageWrapper}>
