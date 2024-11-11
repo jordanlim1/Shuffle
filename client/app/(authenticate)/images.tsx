@@ -32,7 +32,6 @@ const Images = () => {
 
       const imagePromises = images.map(async (uri) => {
         if (uri) {
-          const response = await fetch(uri);
           formData.append("images", {
             uri: uri,
             type: "image/jpeg",
@@ -55,7 +54,7 @@ const Images = () => {
       //   }
       // }
 
-      const response = await fetch("http://192.168.1.3:3000/query/images", {
+      const response = await fetch("http://192.168.137.245:3000/query/images", {
         method: "POST",
         body: formData,
       });
@@ -79,10 +78,10 @@ const Images = () => {
   async function handleNext() {
     const uploadedImagesCount = images.filter((uri) => uri !== "").length;
 
-    // if (uploadedImagesCount < 5) {
-    //   alert("Upload at least 5 photos to continue.");
-    //   return;
-    // }
+    if (uploadedImagesCount < 5) {
+      alert("Upload at least 5 photos to continue.");
+      return;
+    }
 
     const uploadImages = await addImages();
     if (uploadImages) router.push("/registerUser");

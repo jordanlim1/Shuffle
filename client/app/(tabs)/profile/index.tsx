@@ -1,21 +1,27 @@
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import ProfileCard from "../../Reusable/ProfileCard";
-import { Profile } from "@/Interfaces/interfaces";
 
 const UserProfile = () => {
-  const [profile, setProfile] = useState<Profile>();
   const [location, setLocation] = useState("");
   const [profileId, setProfileId] = useState("");
+
   useEffect(() => {
-    async () => {
+    (async () => {
       const profile_id = await AsyncStorage.getItem("profileId");
       setProfileId(profile_id!);
-    };
+    })();
   }, []);
 
   // const getLocationName = async (
@@ -39,24 +45,11 @@ const UserProfile = () => {
   return (
     <ScrollView style={styles.safeArea}>
       <SafeAreaView>
-        <View style={styles.profileName}>
-          <Text style={styles.name}>{`${profile?.name.split(" ")[0]}`}</Text>
-        </View>
-
-        <View style={styles.profileContent}>
-          <ProfileCard profileId={profileId!} />
-          {/* <View style={styles.imagesContainer}>
-          {profile?.images.map((image, idx) => (
-            <View key={idx} style={styles.imageWrapper}>
-              <Image
-                source={{ uri: image }}
-                style={styles.image}
-                resizeMode="cover"
-              />
-            </View>
-          ))}
-        </View> */}
-        </View>
+        {profileId ? (
+          <ProfileCard profileId={profileId} />
+        ) : (
+          <ActivityIndicator size="large" />
+        )}
       </SafeAreaView>
     </ScrollView>
   );

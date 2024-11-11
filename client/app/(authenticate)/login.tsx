@@ -128,7 +128,6 @@ export default function Login() {
       await SecureStore.setItemAsync("access_token", response.access_token);
       await SecureStore.setItemAsync("refresh_token", response.refresh_token);
 
-      console.log(response.refresh_token);
       getProfile(response.access_token);
     } else {
       throw new Error("Failed to retrieve access token");

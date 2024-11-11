@@ -15,5 +15,5 @@ export interface Profile {
 }
 
 export interface ProfileCardProps {
-  profileId: string;
+  profileId: string
 }
