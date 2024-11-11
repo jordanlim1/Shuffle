@@ -9,10 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ProfileCard from "@/app/Reusable/ProfileCard";
-
-interface Match {
-  _id: string;
-}
+import { Match } from "@/Interfaces/interfaces";
 
 const Main = () => {
   const [matches, setMatches] = useState<Match[]>();
@@ -33,7 +30,7 @@ const Main = () => {
 
       const data = await response.json();
       const filteredData = data.filter(
-        (match: { _id: string }) => match._id !== profileId
+        (match: Match) => match._id !== profileId
       );
 
       setMatches(filteredData);

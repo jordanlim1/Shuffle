@@ -8,15 +8,22 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import { ProfileCardProps, Profile } from "@/Interfaces/interfaces";
+import {
+  ProfileCardProps,
+  Profile,
+  TrackArtist,
+} from "@/Interfaces/interfaces";
 import * as SecureStore from "expo-secure-store";
-import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Fontisto from "@expo/vector-icons/Fontisto";
+import {
+  Playlist,
+  Song,
+  SelectedPlaylists,
+  SelectedTracks,
+} from "@/Interfaces/interfaces";
 import { useFont } from "./useFont";
 const ProfileCard = ({ profileId }: ProfileCardProps) => {
   const [activeTab, setActiveTab] = useState("info");
@@ -39,8 +46,6 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
     } catch (error) {
       console.log("Error in fetching profile data");
       return;
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -50,7 +55,8 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
         `http://192.168.137.245:3000/auth/refresh-token/${profileId}`
       );
 
-      const data = await response.json();
+      const data: string = await response.json();
+
       if (data) {
         await SecureStore.setItemAsync("access_token", data);
         return fetchPlaylists();
@@ -80,11 +86,12 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
 
       const data = await response.json();
 
-      const albumInfo = data.items.map((playlist) => ({
+      const albumInfo = data.items.map((playlist: Playlist) => ({
         playlistName: playlist.name,
         playlistRef: playlist.href,
         playlistImage: playlist.images[0].url,
       }));
+
       setPlaylists(albumInfo);
     } catch (error) {
       console.log("Error fetching playlists, token expired.", error);
@@ -101,11 +108,14 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
     });
     const data = await response.json();
 
-    const tracks = data.items.map((item) => ({
+    const tracks = data.items.map((item: Song) => ({
       songName: item.track.name,
-      artistName: item.track.artists.map((artist) => artist.name).join(", "),
+      artistName: item.track.artists
+        .map((artist: TrackArtist) => artist.name)
+        .join(", "),
       albumImage: item.track.album.images[2]?.url || "",
     }));
+
     setSelectedPlaylistTracks(tracks);
   };
 
@@ -270,7 +280,9 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
                       <FlatList
                         data={playlists}
                         scrollEnabled={false}
-                        keyExtractor={(item) => item.playlistRef}
+                        keyExtractor={(item: SelectedPlaylists) =>
+                          item.playlistRef
+                        }
                         renderItem={({ item }) => (
                           <TouchableOpacity
                             style={styles.playlistContainer}
@@ -303,7 +315,9 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
                         <FlatList
                           data={selectedPlaylistTracks}
                           scrollEnabled={false}
-                          keyExtractor={(item, index) => index.toString()}
+                          keyExtractor={(item: SelectedTracks, index) =>
+                            index.toString()
+                          }
                           renderItem={({ item }) => (
                             <View style={styles.trackContainer}>
                               <Image
