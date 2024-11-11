@@ -89,7 +89,7 @@ const RegisterUser = () => {
         "refresh_token",
         "access_token",
       ];
-      // Loop through each screen and remove its data from AsyncStorage
+
       for (const screenName of screens) {
         if (screenName === "refresh_token") {
           SecureStore.deleteItemAsync("refresh_token");

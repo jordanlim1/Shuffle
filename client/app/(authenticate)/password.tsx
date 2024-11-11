@@ -4,7 +4,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  Animated,
   Keyboard,
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";

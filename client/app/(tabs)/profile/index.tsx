@@ -83,11 +83,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   imageWrapper: {
-    width: "80%", // Adjust width as needed
-    aspectRatio: 1, // Maintain square aspect ratio
+    width: "80%",
+    aspectRatio: 1,
     margin: 10,
     borderRadius: 8,
-    overflow: "hidden", // Ensures rounded corners
+    overflow: "hidden",
   },
   image: {
     width: "100%",

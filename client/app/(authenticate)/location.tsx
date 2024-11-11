@@ -115,9 +115,9 @@ const LocationScreen = () => {
             >
               <Circle
                 center={region}
-                radius={value * 1609.34} // Adjust the radius as needed
-                strokeColor="rgba(0, 122, 255, 0.5)" // Customize the border color
-                fillColor="rgba(0, 122, 255, 0.2)" // Customize the fill color
+                radius={value * 1609.34} 
+                strokeColor="rgba(0, 122, 255, 0.5)" 
+                fillColor="rgba(0, 122, 255, 0.2)" 
               />
             </MapView>
 
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "50%",
     left: "50%",
-    marginLeft: -20, // Adjust half of icon width
-    marginTop: -20, // Adjust half of icon height
+    marginLeft: -20,
+    marginTop: -20, 
     zIndex: 10,
   },
 

@@ -61,8 +61,8 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
         await SecureStore.setItemAsync("access_token", data);
         return fetchPlaylists();
       }
-    } catch (err) {
-      console.log(err, "Error refreshing token.");
+    } catch (error) {
+      console.log(error, "Error refreshing token.");
     }
   }
 
@@ -434,9 +434,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     display: "flex",
     marginBottom: 10,
-    paddingBottom: 8, // Adds spacing above the line
-    borderBottomWidth: 1, // Creates the line underneath
-    borderBottomColor: "#ccc", // Sets the line color to gray
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
     width: "100%",
     marginTop: 5,
     marginLeft: 10,
@@ -465,9 +465,9 @@ const styles = StyleSheet.create({
   },
 
   artistIcon: {
-    width: 60, // Adjust to desired icon size
+    width: 60,
     height: 60,
-    borderRadius: 30, // Makes the icon circular if desired
+    borderRadius: 30,
   },
   artistText: {
     fontSize: 24,

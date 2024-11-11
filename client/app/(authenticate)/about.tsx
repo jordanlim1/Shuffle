@@ -232,7 +232,7 @@ const personalInfo = () => {
                   display="spinner"
                   onChange={onChange}
                   textColor="#333"
-                  maximumDate={new Date()} // This disables future dates
+                  maximumDate={new Date()}
                 />
                 <TouchableOpacity
                   style={styles.closeButton}
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   locationTouchable: {
-    width: "92.5%", // Ensure it takes full width within locationContainer
+    width: "92.5%",
   },
   locationError: {
     color: "red",

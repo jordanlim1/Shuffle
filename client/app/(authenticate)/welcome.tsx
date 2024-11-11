@@ -20,7 +20,6 @@ export default function Welcome() {
   const logo = require("../../assets/images/logo.png");
 
   useEffect(() => {
-    // Animation sequence for logo and text
     Animated.sequence([
       Animated.parallel([
         Animated.timing(logoScale, {

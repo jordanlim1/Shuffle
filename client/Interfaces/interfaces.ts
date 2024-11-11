@@ -22,8 +22,6 @@ export interface Match {
   _id: string;
 }
 
-// Shared Interfaces
-
 export interface ExternalUrls {
   spotify: string;
 }

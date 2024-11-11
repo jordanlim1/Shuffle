@@ -11,13 +11,12 @@ const Dots = () => {
 
   useEffect(() => {
     const animateDots = () => {
-      // Create an array of animations for each dot
       const animations = dotScales.map((scale, index) =>
         Animated.sequence([
           Animated.timing(scale, {
             toValue: 1.5,
             duration: 500,
-            delay: index * 400, // Stagger each dot's animation
+            delay: index * 400,
             useNativeDriver: true,
           }),
           Animated.timing(scale, {
@@ -36,15 +35,16 @@ const Dots = () => {
   }, [dotScales]);
 
   return (
-      <View style={styles.dotContainer}>
-        {dotScales.map((scale, index) => (
-          <Animated.Text
-            key={index}
-            style={[styles.dot, { transform: [{ scale }] }]}>
-            .
-          </Animated.Text>
-        ))}
-      </View>
+    <View style={styles.dotContainer}>
+      {dotScales.map((scale, index) => (
+        <Animated.Text
+          key={index}
+          style={[styles.dot, { transform: [{ scale }] }]}
+        >
+          .
+        </Animated.Text>
+      ))}
+    </View>
   );
 };
 
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-start",
-    marginTop: -5
+    marginTop: -5,
   },
   dot: {
     fontSize: 60,

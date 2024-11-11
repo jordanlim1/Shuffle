@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   optionButton: {
     alignItems: "center",
     justifyContent: "center",
-    width: "45%", // Allows two buttons per row with some spacing
+    width: "45%",
     height: 120,
     backgroundColor: "#fff",
     borderRadius: 10,

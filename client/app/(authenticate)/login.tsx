@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   linkText: {
-    color: "#1e90ff", // Blue color for the link
+    color: "#1e90ff",
     fontWeight: "bold",
     marginTop: 5,
     fontSize: 16,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "column",
     padding: 30,
-    borderRadius: 16, // Rounded corners
+    borderRadius: 16,
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 4 },
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#ff5a79", // A fun, romantic color for the labels
+    color: "#ff5a79",
     marginBottom: 8,
     fontFamily: "NotoSansMono",
   },
@@ -332,9 +332,9 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   title: {
-    fontSize: 50, // Large font size for the title
-    fontWeight: "bold", // Bold text
-    color: "#ffb6c1", // Custom color for a unique look
+    fontSize: 50,
+    fontWeight: "bold",
+    color: "#ffb6c1",
     textAlign: "center",
     marginBottom: 80,
     fontFamily: "NotoSansMono",
