@@ -23,7 +23,6 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
   const [playlists, setPlaylists] = useState([]);
   const [profile, setProfile] = useState<Profile>();
   const [selectedPlaylistTracks, setSelectedPlaylistTracks] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getProfileData();
@@ -116,7 +115,7 @@ const ProfileCard = ({ profileId }: ProfileCardProps) => {
       {profile && (
         <View>
           <View style={styles.profileNameContainer}>
-            <Text style={styles.name}>{`${profile?.name}`}</Text>
+            <Text style={styles.name}>{`${profile?.name.split(" ")[0]}`}</Text>
           </View>
 
           <View style={styles.imageWrapper}>

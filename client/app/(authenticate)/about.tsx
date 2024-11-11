@@ -60,38 +60,37 @@ const personalInfo = () => {
     inches: null,
   });
 
-  //if user signed in w/ spotify oauth, this fields should be prepopulated
   useEffect(() => {
-    prefill();
+    (async () => {
+      const storedName = await getResgistrationInfo("name");
+      const storedEmail = await getResgistrationInfo("email");
+
+      if (storedName) setName(storedName);
+      if (storedEmail) setEmail(storedEmail);
+    })();
   }, []);
-
-  const prefill = async () => {
-    const storedName = await getResgistrationInfo("name");
-    const storedEmail = await getResgistrationInfo("email");
-
-    if (storedName) setName(storedName);
-    if (storedEmail) setEmail(storedEmail);
-  };
 
   const handleNextPress = async () => {
     const errors = {
       name: !name,
       email: !email,
-      age: birthdayPlaceholder === "Enter your birthday",
+      age: !age,
       height: height.feet === null || height.inches === null,
     };
 
     setValidationErrors(errors);
 
     if (!Object.values(errors).includes(true)) {
-      if (!email.includes("@")) {
-        alert("Invalid email format.");
+      // if (!email.includes("@")) {
+      //   alert("Invalid email format.");
+      //   return;
+      // }
+      if (age! < 18) {
+        alert("You must be 18 or older to use Shuffle.");
         return;
       }
       const verified = await AsyncStorage.getItem("access_token");
 
-      saveRegistrationInfo("name", name);
-      saveRegistrationInfo("email", email);
       router.push(verified ? "/location" : "/password");
     }
   };
@@ -133,10 +132,11 @@ const personalInfo = () => {
               />
               <TextInput
                 value={name}
-                onChangeText={(text) => {
-                  setName(text);
-                  setValidationErrors((prev) => ({ ...prev, name: false }));
-                }}
+                // onChangeText={(text) => {
+                //   setName(text);
+                //   setValidationErrors((prev) => ({ ...prev, name: false }));
+                // }}
+                editable={false}
                 placeholder="Enter your first name"
                 placeholderTextColor={"#333"}
                 style={styles.textInput}
@@ -153,10 +153,11 @@ const personalInfo = () => {
               />
               <TextInput
                 value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  setValidationErrors((prev) => ({ ...prev, email: false }));
-                }}
+                // onChangeText={(text) => {
+                //   setEmail(text);
+                //   setValidationErrors((prev) => ({ ...prev, email: false }));
+                // }}
+                editable={false}
                 placeholder="Enter your email"
                 placeholderTextColor={"#333"}
                 style={styles.textInput}
